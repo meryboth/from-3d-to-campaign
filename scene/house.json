@@ -1,0 +1,106 @@
+{
+  "id": "chorizo-01",
+  "name": "Casa chorizo, 10-vara lot",
+  "notes": "Units in meters. x = lot width (0 = left party wall), z = depth (0 = street line, grows toward the back), y = up. Walls are centerlines; openings use 'at' = world coordinate along the wall.",
+  "lot": { "width": 8.66, "depth": 50 },
+
+  "rooms": [
+    { "id": "sala", "use": "living", "x": [0, 4.2], "z": [0.45, 4.5], "h": 4.8 },
+    { "id": "escritorio", "use": "study", "x": [4.2, 6.66], "z": [0.45, 4.5], "h": 4.8 },
+    { "id": "zaguan", "use": "entrance hall", "x": [6.66, 8.66], "z": [0.45, 4.5], "h": 4.8 },
+    { "id": "dorm1", "use": "bedroom", "x": [0, 4.2], "z": [4.5, 8.5], "h": 4.8 },
+    { "id": "dorm2", "use": "bedroom", "x": [0, 4.2], "z": [8.5, 12.5], "h": 4.8 },
+    { "id": "dorm3", "use": "bedroom", "x": [0, 4.2], "z": [12.5, 16.5], "h": 4.8 },
+    { "id": "comedor", "use": "dining", "x": [0, 8.66], "z": [16.5, 21], "h": 4.8 },
+    { "id": "servicio", "use": "service room", "x": [0, 4.2], "z": [21, 25], "h": 3.6 },
+    { "id": "cocina", "use": "kitchen", "x": [0, 4.2], "z": [25, 29], "h": 3.6 },
+    { "id": "bano", "use": "bathroom", "x": [0, 4.2], "z": [29, 32], "h": 3.6 }
+  ],
+
+  "galleries": [
+    { "id": "galeria1", "x": [4.2, 5.6], "z": [4.5, 16.5], "h": 4.1, "columns": [7.5, 10.5, 13.5] },
+    { "id": "galeria2", "x": [4.2, 5.6], "z": [21, 32], "h": 3.3, "columns": [24.5, 28, 31.8] }
+  ],
+
+  "patios": [
+    { "id": "patio1", "x": [4.2, 8.66], "z": [4.5, 16.5], "floor": "floor_tile" },
+    { "id": "patio2", "x": [4.2, 8.66], "z": [21, 32], "floor": "floor_tile" },
+    { "id": "fondo", "x": [0, 8.66], "z": [32, 50], "floor": "grass" }
+  ],
+
+  "facade": {
+    "z": 0.225, "t": 0.45, "h": 4.8,
+    "openings": [
+      { "kind": "window", "at": 2.1, "w": 1.2, "h": 2.7, "sill": 0.95, "face": "-z", "grille": true, "shutters": true },
+      { "kind": "window", "at": 5.43, "w": 1.1, "h": 2.7, "sill": 0.95, "face": "-z", "grille": true, "shutters": true },
+      { "kind": "door", "at": 7.55, "w": 1.2, "h": 3.4, "face": "-z", "fanlight": true }
+    ],
+    "pilasters": [0.3, 4.2, 6.66, 8.41],
+    "cornice": { "y": 4.55, "h": 0.4, "depth": 0.45 },
+    "balustrade": { "y": 4.95, "h": 0.95, "posts": [0.3, 4.2, 6.66, 8.41] },
+    "plinth": { "h": 0.9 }
+  },
+
+  "walls": [
+    { "id": "party_left_front", "kind": "party", "from": [0.15, 0], "to": [0.15, 21], "h": 5.9, "t": 0.3 },
+    { "id": "party_left_service", "kind": "party", "from": [0.15, 21], "to": [0.15, 32], "h": 4.2, "t": 0.3 },
+    { "id": "party_left_garden", "kind": "party", "from": [0.15, 32], "to": [0.15, 50], "h": 2.6, "t": 0.3 },
+    { "id": "party_right_front", "kind": "party", "from": [8.51, 0], "to": [8.51, 21], "h": 5.9, "t": 0.3 },
+    { "id": "party_right_service", "kind": "party", "from": [8.51, 21], "to": [8.51, 32], "h": 4.2, "t": 0.3 },
+    { "id": "party_right_garden", "kind": "party", "from": [8.51, 32], "to": [8.51, 50], "h": 2.6, "t": 0.3 },
+    { "id": "back_garden", "kind": "party", "from": [0, 49.85], "to": [8.66, 49.85], "h": 2.6, "t": 0.3 },
+
+    { "id": "sala_escritorio", "kind": "interior", "from": [4.2, 0.45], "to": [4.2, 4.5], "h": 4.8, "t": 0.25 },
+    { "id": "escritorio_zaguan", "kind": "interior", "from": [6.66, 0.45], "to": [6.66, 4.5], "h": 4.8, "t": 0.25 },
+    { "id": "front_block_back", "kind": "patio", "from": [0.3, 4.5], "to": [8.36, 4.5], "h": 4.8, "t": 0.25,
+      "openings": [
+        { "kind": "doorGlass", "at": 5.4, "w": 1.1, "h": 3.0, "face": "+z" },
+        { "kind": "door", "at": 7.66, "w": 1.4, "h": 3.5, "face": "+z", "fanlight": true }
+      ] },
+    { "id": "rooms_gallery1", "kind": "patio", "from": [4.2, 4.5], "to": [4.2, 16.5], "h": 4.8, "t": 0.25,
+      "openings": [
+        { "kind": "doorGlass", "at": 6.5, "w": 1.2, "h": 3.0, "face": "+x", "shutters": true },
+        { "kind": "doorGlass", "at": 10.5, "w": 1.2, "h": 3.0, "face": "+x", "shutters": true },
+        { "kind": "doorGlass", "at": 14.5, "w": 1.2, "h": 3.0, "face": "+x", "shutters": true }
+      ] },
+    { "id": "dorm1_dorm2", "kind": "interior", "from": [0.3, 8.5], "to": [4.2, 8.5], "h": 4.8, "t": 0.2 },
+    { "id": "dorm2_dorm3", "kind": "interior", "from": [0.3, 12.5], "to": [4.2, 12.5], "h": 4.8, "t": 0.2 },
+    { "id": "comedor_front", "kind": "patio", "from": [0.3, 16.5], "to": [8.36, 16.5], "h": 4.8, "t": 0.25,
+      "openings": [
+        { "kind": "doorGlass", "at": 4.9, "w": 1.2, "h": 3.0, "face": "-z", "shutters": true },
+        { "kind": "doorGlass", "at": 7.1, "w": 1.6, "h": 3.0, "face": "-z", "shutters": true }
+      ] },
+    { "id": "comedor_back", "kind": "patio", "from": [0.3, 21], "to": [8.36, 21], "h": 4.8, "t": 0.25,
+      "openings": [
+        { "kind": "doorGlass", "at": 4.9, "w": 1.2, "h": 3.0, "face": "+z" },
+        { "kind": "window", "at": 7.1, "w": 1.4, "h": 2.0, "sill": 1.0, "face": "+z", "shutters": true }
+      ] },
+    { "id": "service_gallery2", "kind": "patio", "from": [4.2, 21], "to": [4.2, 32], "h": 3.6, "t": 0.25,
+      "openings": [
+        { "kind": "doorGlass", "at": 23, "w": 1.1, "h": 2.7, "face": "+x" },
+        { "kind": "doorGlass", "at": 26.3, "w": 1.1, "h": 2.7, "face": "+x" },
+        { "kind": "window", "at": 28, "w": 0.9, "h": 1.2, "sill": 1.3, "face": "+x" },
+        { "kind": "door", "at": 30.5, "w": 0.9, "h": 2.4, "face": "+x" }
+      ] },
+    { "id": "servicio_cocina", "kind": "interior", "from": [0.3, 25], "to": [4.2, 25], "h": 3.6, "t": 0.2 },
+    { "id": "cocina_bano", "kind": "interior", "from": [0.3, 29], "to": [4.2, 29], "h": 3.6, "t": 0.2 },
+    { "id": "service_back", "kind": "patio", "from": [0.3, 32], "to": [4.2, 32], "h": 3.6, "t": 0.25,
+      "openings": [ { "kind": "window", "at": 2.1, "w": 0.8, "h": 1.0, "sill": 1.5, "face": "+z" } ] }
+  ],
+
+  "garden": {
+    "trees": [ { "x": 2.8, "z": 42, "h": 7.5, "r": 2.6 }, { "x": 6.6, "z": 46.5, "h": 5.5, "r": 1.9 } ],
+    "planters": [ { "x": 8.0, "z": 9.2 }, { "x": 7.9, "z": 15.2 }, { "x": 6.2, "z": 16.0 } ]
+  },
+
+  "context": {
+    "street": { "sidewalk": 3.0, "roadway": 10.0 },
+    "streetTrees": [ { "x": -3.2, "z": -1.6, "h": 9, "r": 3.2 }, { "x": 13.8, "z": -1.6, "h": 8.5, "r": 3.0 } ],
+    "neighbors": [
+      { "x": [-17.32, -8.66], "h": 10.2, "depth": 14, "floors": 3, "tone": "neighbor_a" },
+      { "x": [-8.66, 0], "h": 7.4, "depth": 16, "floors": 2, "tone": "neighbor_b" },
+      { "x": [8.66, 17.32], "h": 5.6, "depth": 18, "floors": 1, "tone": "neighbor_c" },
+      { "x": [17.32, 25.98], "h": 8.2, "depth": 14, "floors": 2, "tone": "neighbor_a" }
+    ]
+  }
+}
