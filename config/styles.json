@@ -6,9 +6,17 @@
     "patio": "real estate photograph inside the courtyard of a restored Buenos Aires casa chorizo, black and white checkerboard marble floor, slender cast-iron columns holding a gallery roof, tall double glass doors with wooden shutters, potted plants, lime-plaster walls, sky above"
   },
   "styles": {
-    "restored": "warm late afternoon sunlight, golden hour, clear blue sky, cream and ochre plaster, dark green shutters, freshly restored, crisp shadows, architectural photography, 24mm lens, sharp focus, high detail",
+    "restored": "warm late afternoon sunlight, golden hour, clear blue sky, freshly restored, crisp shadows, architectural photography, 24mm lens, sharp focus, high detail",
     "contemporary": "soft overcast daylight, white-washed plaster, black steel window frames, minimalist contemporary renovation, pale natural wood, clean and airy, editorial architectural photography, 24mm lens, sharp focus",
     "dusk": "blue hour at dusk, warm interior lights glowing through the windows, soft wall lights, deep blue sky, cozy and inviting, long exposure architectural photography, 24mm lens, sharp focus"
   },
-  "palette": "warm cream lime-plaster walls, ivory white mouldings, cornice and balustrade, grey stone plinth, dark green painted wooden shutters, dark brown varnished wooden front door, black wrought iron"
+  "palette": "warm cream lime-plaster walls, ivory white mouldings, cornice and balustrade, grey stone plinth, dark green painted wooden shutters, dark brown varnished wooden front door, black wrought iron",
+  "_changelog": [
+    {
+      "date": "2026-09-18",
+      "style": "restored",
+      "removed": "cream and ochre plaster, dark green shutters",
+      "why": "contradicted the brand palette (cream walls); patio/aerial restored failed the color gate twice for the same reason"
+    }
+  ]
 }

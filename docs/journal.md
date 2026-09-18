@@ -136,3 +136,21 @@ Gate v1.1 on the grid: **5/9 pass** (all 3 street, patio dusk, patio contemporar
 These go to the retry loop (new seed) or human review.
 
 **Incident:** the grid's street/restored output had the same filename as an A/B output and overwrote it. It was restored from its still-valid signed URL, and `cloud_collect.py` now refuses to overwrite. Lesson: output names must encode every axis (model, refs, palette, camera, style, seed).
+
+## Stage 6: retry loop → human review
+
+The 4 grid items that failed gate v1.1 went through the retry loop (≈ 0.8–1.0 credit per try):
+
+| item | try 1 (seed 1001) | try 2 (seed 2001) | result |
+|---|---|---|---|
+| patio / restored | ΔE 24.1 | ΔE 21.4 (prompt fixed) | → human review |
+| aerial / restored | ΔE 13.4 | **edge 0.83, ΔE 10.4** | → human review (0.4 over the limit) |
+| aerial / dusk | edge 0.698 | ΔE 19.3 | → human review |
+| aerial / contemporary | edge 0.67 | edge 0.694 | → human review (0.006 under the limit) |
+
+**Lessons:**
+1. **The same failure twice is a prompt bug, not bad luck.** The "restored" style said "cream **and ochre** plaster", which contradicts the brand palette (cream). Removing it didn't fully fix the patio: under golden-hour sun the walls still read yellow.
+2. **Gray-world white balance fails when one color dominates the frame** (the patio walls are 24 % of it). Whether the render shows "cream paint in warm light" or "yellow paint" is a judgment call, better made by a person or a vision-language judge than by a threshold.
+3. **After N retries, stop spending and escalate.** The 4 items sit in `out/review/pending.json` with their candidates and gate notes. This is the human approval checkpoint, and later a LangGraph interrupt.
+
+Retries: 8 images, ≈ 6.9 credits. Running total for the day: ≈ 30 credits ≈ $0.14 (Comfy Cloud), $0 local.
