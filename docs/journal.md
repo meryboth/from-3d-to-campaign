@@ -92,3 +92,25 @@ Creator plan, RTX Pro 6000 (96 GB). Four flat API workflows in `workflows/api/cl
 - **Qwen** is the most "photographic" and ornate, but it drifts the most: it invented a door on the left.
 
 **Metric caveat:** ΔE is measured against a flat-lit beauty, so golden-hour prompts are penalized even when the paint color is right. Next: compare hue/chroma after white balance, and add a realism score.
+
+## Stage 4: automatic quality gate
+
+`pipeline/gate.py` combines four checks, all local, $0, and ~1 s per image on the 2060 once models are loaded. Thresholds live in `config/qa.json`.
+
+| check | how | threshold v1 | what it catches |
+|---|---|---|---|
+| geometry | edge recall of the 3D lines in the render, ±2 px, house only | ≥ 0.70 | drift, invented doors |
+| brand color | ΔE (Lab) per material region after gray-world white balance | facade ≤ 10 | off-palette paint (without penalizing golden light) |
+| reads as photo | CLIP ViT-L/14 zero-shot, photo vs 3D render / CGI | p ≥ 0.5 | the obvious CG cases (img2img d0.6: 0.04) |
+| natural texture | NIQE (pyiqa) | ≤ 5.0 | flat, over-clean CG surfaces (beauty: 9.8) |
+
+What each metric turned out to be worth:
+- **NIQE** separated photo from CG best (SDXL ~2, klein ~3, img2img 3.5–5.8, beauty 9.8).
+- **CLIP p_photo** is saturated (most renders score 0.97–0.99). It's useful as a coarse filter only, and it had one false positive (Z-Image s2 at 0.10).
+- **The LAION aesthetic predictor** barely moves on architecture (4.8–5.8), so it's kept as data only and isn't gated.
+
+Gate v1 on the 18 street renders: 7 pass. **Both FLUX.2 klein renders pass.** Qwen fails on geometry and palette, Z-Image on palette, and baseline SDXL on geometry and palette.
+
+`render.py --gate N` re-renders with a new seed (seed + 1000) until the gate passes, up to N times, logging each verdict as `stage: qa_gate`. If nothing passes, the item is flagged for human review. That flag is where the approval checkpoint will plug in.
+
+The thresholds are calibrated by eye on 18 images. They should be recalibrated with a Gemini-as-judge or human labels before scaling.

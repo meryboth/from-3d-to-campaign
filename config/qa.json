@@ -1,0 +1,7 @@
+{
+  "_note": "Quality gate thresholds. v1 calibrated by eye on 18 street renders (2026-09-18); recalibrate with a Gemini/human judge before trusting them at scale.",
+  "edge_recall_min": 0.70,
+  "delta_e_wb_facade_max": 10.0,
+  "p_photo_min": 0.5,
+  "niqe_max": 5.0
+}

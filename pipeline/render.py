@@ -84,8 +84,26 @@ def main():
     ap.add_argument("--tag", default="", help="free label for experiments (A/B tests)")
     ap.add_argument("--retries", type=int, default=2)
     ap.add_argument("--force", action="store_true")
+    ap.add_argument("--gate", type=int, default=0, metavar="N",
+                    help="quality gate (config/qa.json): on fail, retry up to N times with a new seed")
     args = ap.parse_args()
 
+    for gate_try in range(args.gate + 1):
+        out_png = render_once(args)
+        if not args.gate:
+            return
+        from gate import check
+        ok, scores, reasons = check(out_png, args.cam)
+        log({"stage": "qa_gate", "item": f"{args.cam}/{args.style}/s{args.seed}", "output": str(out_png.relative_to(ROOT)),
+             "passed": ok, "reasons": reasons, "scores": {k: v for k, v in scores.items() if k != "house_px"}, "gate_try": gate_try})
+        print(("QA PASS " if ok else "QA FAIL ") + "; ".join(reasons))
+        if ok:
+            return
+        args.seed += 1000  # new seed, same everything else
+    print(f"gate: no render passed after {args.gate + 1} tries; flag for human review")
+
+
+def render_once(args):
     wf, controls, key = build(args)
     out_dir = ROOT / "out" / "renders" / args.cam
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -97,7 +115,7 @@ def main():
     if out_png.exists() and not args.force:
         log({**base, "cache_hit": True, "ms": 0, "attempt": 0})
         print(f"cache hit  {out_png.relative_to(ROOT)}")
-        return
+        return out_png
 
     comfy = Comfy()
     for name, data in controls.items():
@@ -124,6 +142,7 @@ def main():
     log(meta)
     print(json.dumps({k: meta[k] for k in ("item", "ms", "node_ms", "cached_nodes", "vram_peak_mb", "power_avg_w", "energy_wh")}, indent=1))
     print(out_png.relative_to(ROOT))
+    return out_png
 
 
 if __name__ == "__main__":

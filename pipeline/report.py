@@ -28,21 +28,23 @@ def runs():
 def main():
     sys.stdout.reconfigure(encoding="utf-8")
     rows = runs()
+    from realism import score as realism
     for r in rows:
         r["qa"] = evaluate(ROOT / r["output"])
+        r["realism"] = realism(ROOT / r["output"])
     out = ROOT / "out" / "benchmarks"
     out.mkdir(parents=True, exist_ok=True)
     (out / "renders.json").write_text(json.dumps(rows, indent=1))
 
-    print("| tag | workflow | steps | cfg | wall s | sampler s | VRAM GB | Wh | edge recall | ΔE facade | ΔE shutters |")
+    print("| tag | item | backend | time s | $ | edge recall | ΔE facade (wb) | ΔE shutters (wb) | p_photo | aesthetic | niqe |")
     print("|---|---|---|---|---|---|---|---|---|---|---|")
     for r in rows:
-        sampler = r.get("node_ms", {}).get("sampler")
-        de = r["qa"]["delta_e"]
-        steps = next((o.split("=")[1] for o in r.get("overrides", []) if o.startswith("sampler.steps=")), r.get("steps"))
-        print(f"| {r.get('tag') or '-'} | {r['workflow']} | {steps} | {r.get('cfg')} | {r['ms'] / 1000:.1f} | "
-              f"{sampler / 1000 if sampler else float('nan'):.1f} | {(r.get('vram_peak_mb') or 0) / 1024:.2f} | {r.get('energy_wh') or '-'} | "
-              f"{r['qa']['edge_recall']:.3f} | {de.get('facade_plaster', '-')} | {de.get('wood_shutter', '-')} |")
+        de = r["qa"]["delta_e_wb"]
+        rl = r["realism"]
+        backend = "cloud GPU" if r.get("backend") == "comfy_cloud" else "local 2060"
+        print(f"| {r.get('tag') or '-'} | {r['item']} | {backend} | {r['ms'] / 1000:.1f} | {r.get('cost_usd', 0):.4f} | "
+              f"{r['qa']['edge_recall']:.3f} | {de.get('facade_plaster', '-')} | {de.get('wood_shutter', '-')} | "
+              f"{rl['p_photo']:.2f} | {rl['aesthetic']:.2f} | {rl['niqe']:.2f} |")
 
     # comparison sheet: beauty reference first, then every render labeled with its tag and key numbers
     tiles = [(ROOT / "out" / "passes" / "street" / "beauty.png", "reference: Three.js beauty")]

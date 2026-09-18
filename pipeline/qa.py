@@ -84,12 +84,23 @@ def evaluate(render_path, cam=None):
     edge_recall = float((target & found).sum() / max(1, target.sum()))
 
     lab_r, lab_b = to_lab(img), to_lab(beauty)
-    delta_e = {}
+    # white-balanced variant: gray-world over the house region, so warm golden-hour light
+    # isn't counted as "wrong paint" (a golden facade that is the right paint under that light)
+    lab_rw, lab_bw = to_lab(gray_world(img, house)), to_lab(gray_world(beauty, house))
+    delta_e, delta_e_wb = {}, {}
     for k in COLOR_KEYS:
         m = mask_for(ids, [k])
         if m.sum() > 200:
             delta_e[k] = round(float(np.linalg.norm(lab_r[m].mean(0) - lab_b[m].mean(0))), 1)
-    return {"edge_recall": round(edge_recall, 3), "delta_e": delta_e, "house_px": int(house.sum())}
+            delta_e_wb[k] = round(float(np.linalg.norm(lab_rw[m].mean(0) - lab_bw[m].mean(0))), 1)
+    return {"edge_recall": round(edge_recall, 3), "delta_e": delta_e, "delta_e_wb": delta_e_wb, "house_px": int(house.sum())}
+
+
+def gray_world(rgb, mask):
+    """Scale channels so the masked region averages to neutral gray (keeps its luminance)."""
+    c = rgb.astype(np.float64)
+    mean = c[mask].mean(0)
+    return np.clip(c * (mean.mean() / np.maximum(mean, 1e-6)), 0, 255).astype(np.uint8)
 
 
 if __name__ == "__main__":
