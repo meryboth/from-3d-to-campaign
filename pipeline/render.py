@@ -53,7 +53,9 @@ def build(args):
     wf = json.loads((ROOT / "workflows" / "api" / f"{args.workflow}.json").read_text())
     styles = json.loads((ROOT / "config" / "styles.json").read_text())
     passes = ROOT / "out" / "passes" / args.cam
-    controls = {name: (passes / f"{name}.png").read_bytes() for name in ("depth", "lines")}
+    # every LoadImage titled "<pass>_image" gets that render pass (depth, lines, beauty, ...)
+    names = [n["_meta"]["title"][:-6] for n in wf.values() if n["class_type"] == "LoadImage" and n["_meta"]["title"].endswith("_image")]
+    controls = {name: (passes / f"{name}.png").read_bytes() for name in names}
 
     by_title(wf, "positive")["text"] = f"{styles['subject'][args.cam]}, {styles['styles'][args.style]}"
     by_title(wf, "negative")["text"] = styles["negative"]
