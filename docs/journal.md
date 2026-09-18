@@ -114,3 +114,25 @@ Gate v1 on the 18 street renders: 7 pass. **Both FLUX.2 klein renders pass.** Qw
 `render.py --gate N` re-renders with a new seed (seed + 1000) until the gate passes, up to N times, logging each verdict as `stage: qa_gate`. If nothing passes, the item is flagged for human review. That flag is where the approval checkpoint will plug in.
 
 The thresholds are calibrated by eye on 18 images. They should be recalibrated with a Gemini-as-judge or human labels before scaling.
+
+## Stage 5: winner and the first 3×3 grid (Comfy Cloud)
+
+**A/B, street camera, 2 seeds each** (~6.2 credits):
+- **FLUX.2 klein 9B + a second reference (the inverted line drawing):** geometry 0.75 → 0.77, ΔE_wb 2.2–6.8, p_photo 0.98–0.99, NIQE ~2.9. Both seeds pass.
+- **Z-Image + brand palette in the prompt:** fixes the color (ΔE_wb 1.5–8.1) but gets a bit more CG-looking (NIQE 4.4–5.1). 1 of 2 passes.
+- → The winner is **klein edit + line reference**, with the palette in the prompt for the brand styles.
+
+**Grid: 3 cameras × 3 styles, seed 1** (~7.7 credits): **4.13–4.37 GPU s per image, ≈ $0.004 per image.** Steady because the model stayed warm. Total for A/B + grid: ≈ 13.9 credits (≈ $0.066).
+
+**Gate v1 → v1.1:** reviewing the failures showed two false negatives caused by the metric, not the render:
+1. On the aerial camera the facade is 0.37 % of the frame and hidden by a tree, so a facade ΔE is noise. Fix: measure color on the **visible plaster walls** (facade + patio), and only when they cover ≥ 1 % of the frame.
+2. Dusk has mixed illuminants (warm interior, blue sky), which breaks gray-world white balance. Fix: a per-style tolerance, **dusk ΔE ≤ 14**.
+
+Gate v1.1 on the grid: **5/9 pass** (all 3 street, patio dusk, patio contemporary). The 4 real failures:
+- patio restored: walls painted ochre instead of cream (ΔE 18.6)
+- aerial restored and aerial contemporary: geometry 0.65 / 0.69
+- aerial dusk: ΔE 16.5
+
+These go to the retry loop (new seed) or human review.
+
+**Incident:** the grid's street/restored output had the same filename as an A/B output and overwrote it. It was restored from its still-valid signed URL, and `cloud_collect.py` now refuses to overwrite. Lesson: output names must encode every axis (model, refs, palette, camera, style, seed).

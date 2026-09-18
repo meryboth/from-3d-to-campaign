@@ -18,16 +18,18 @@ def thresholds():
     return json.loads((ROOT / "config" / "qa.json").read_text())
 
 
-def check(path, cam=None):
+def check(path, cam=None, style=None):
     t = thresholds()
     qa = evaluate(path, cam)
     rl = realism(path)
-    de = qa["delta_e_wb"].get("facade_plaster")
+    de = qa["delta_e_wb"].get("walls")
+    de_max = t.get("delta_e_wb_max_by_style", {}).get(style, t["delta_e_wb_walls_max"])
     reasons = []
     if qa["edge_recall"] < t["edge_recall_min"]:
         reasons.append(f"geometry drift: edge recall {qa['edge_recall']:.2f} < {t['edge_recall_min']}")
-    if de is not None and de > t["delta_e_wb_facade_max"]:
-        reasons.append(f"off-palette facade: ΔE {de} > {t['delta_e_wb_facade_max']}")
+    color_applies = (style is None or style in t.get("brand_color_styles", [style])) and qa["walls_frac"] >= t["walls_min_frac"]
+    if color_applies and de is not None and de > de_max:
+        reasons.append(f"off-palette walls: ΔE {de} > {de_max}")
     if rl["p_photo"] < t["p_photo_min"]:
         reasons.append(f"reads as CG: p_photo {rl['p_photo']:.2f} < {t['p_photo_min']}")
     if rl["niqe"] > t["niqe_max"]:

@@ -1,0 +1,30 @@
+{
+ "street/beauty": {
+  "local_sha": "935fb5bd11e7dc5b",
+  "cloud_name": "91a69d9730cc12757ea47439029b5e95eee696c9b49df6606e2f3c4fa1475acc.png"
+ },
+ "street/depth": {
+  "local_sha": "bfa623b73cac4307",
+  "cloud_name": "0a3bd4dd4ecffa9ef1dea65645e086685e66c1cd3d9e3b7351ef3e89ffc81141.png"
+ },
+ "street/lines": {
+  "local_sha": "4b3101e6ea0b5112",
+  "cloud_name": "6102fc8cdb1e0ddd8a457c36b440283d9e00ebcef6907151dd530f39506a838d.png"
+ },
+ "aerial/beauty": {
+  "local_sha": "3c53729d9822d6e8",
+  "cloud_name": "0b8984c2d69cc8162b739534cfec164c644d92447ef317a1f8cc4ed29f38ee8e.png"
+ },
+ "aerial/lines": {
+  "local_sha": "bcbac43844702e92",
+  "cloud_name": "5b4189be5ecd56189e8df40ea68c160cd36ae247121bc7be88d8b3eb6df7314a.png"
+ },
+ "patio/beauty": {
+  "local_sha": "8ba00cf5d4eadd44",
+  "cloud_name": "a60456c12d0434dfc73e0c51da31c8dd26c7a1bd886fc056a3f8fea0970e898d.png"
+ },
+ "patio/lines": {
+  "local_sha": "e7aaca0c81cb10b8",
+  "cloud_name": "20e726de6542e425df032903a8edac05fe9344d4061c10504f5501f95d4d0f05.png"
+ }
+}

@@ -93,7 +93,7 @@ def main():
         if not args.gate:
             return
         from gate import check
-        ok, scores, reasons = check(out_png, args.cam)
+        ok, scores, reasons = check(out_png, args.cam, args.style)
         log({"stage": "qa_gate", "item": f"{args.cam}/{args.style}/s{args.seed}", "output": str(out_png.relative_to(ROOT)),
              "passed": ok, "reasons": reasons, "scores": {k: v for k, v in scores.items() if k != "house_px"}, "gate_try": gate_try})
         print(("QA PASS " if ok else "QA FAIL ") + "; ".join(reasons))

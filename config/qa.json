@@ -1,7 +1,17 @@
 {
-  "_note": "Quality gate thresholds. v1 calibrated by eye on 18 street renders (2026-09-18); recalibrate with a Gemini/human judge before trusting them at scale.",
-  "edge_recall_min": 0.70,
-  "delta_e_wb_facade_max": 10.0,
+  "_note": "Quality gate v1.1 (2026-09-18). v1 calibrated by eye on 18 street renders; v1.1 after reviewing the 3x3 grid's failures. Recalibrate with a Gemini/human judge before trusting at scale.",
+  "edge_recall_min": 0.7,
   "p_photo_min": 0.5,
-  "niqe_max": 5.0
+  "niqe_max": 5.0,
+  "brand_color_styles": [
+    "restored",
+    "dusk"
+  ],
+  "_note_styles": "contemporary is a deliberate material change (white-wash, black steel), so the brand-color check is skipped there",
+  "delta_e_wb_walls_max": 10.0,
+  "walls_min_frac": 0.01,
+  "delta_e_wb_max_by_style": {
+    "dusk": 14.0
+  },
+  "_note_color": "brand color = \u0394E on visible plaster walls (facade + patio) after gray-world WB; skipped when walls < 1% of frame (aerial: facade 0.4%); dusk tolerance 14 because gray-world assumes a single illuminant"
 }

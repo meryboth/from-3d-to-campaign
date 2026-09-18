@@ -24,17 +24,20 @@ def main():
     ap.add_argument("--cam", default="street")
     args = ap.parse_args()
 
-    out_dir = ROOT / "out" / "renders" / "cloud" / args.cam
-    out_dir.mkdir(parents=True, exist_ok=True)
     runs = ROOT / "out" / "runs.jsonl"
     for it in json.loads(Path(args.batch).read_text()):
+        cam = it.get("cam", args.cam)
+        out_dir = ROOT / "out" / "renders" / "cloud" / cam
+        out_dir.mkdir(parents=True, exist_ok=True)
         entry = {"ts": datetime.now(timezone.utc).isoformat(), "stage": "render", "backend": "comfy_cloud", "gpu": "rtx_pro_6000",
-                 "item": f"{args.cam}/{it['label']}", "workflow": "cloud/" + it["label"].rsplit("_", 2)[0], "tag": args.tag,
+                 "item": f"{cam}/{it['label']}", "style": it.get("style"), "workflow": "cloud/" + it["label"].rsplit("_", 2)[0], "tag": args.tag,
                  "model": it.get("model"), "steps": it.get("steps"), "cache_hit": False, "attempt": 1, "job_id": it.get("job")}
         if it.get("error"):
             entry.update(error=it["error"], gpu_seconds=0, credits=0, cost_usd=0, ms=0)
         else:
             out = out_dir / f"{it['label']}.png"
+            if out.exists():
+                raise SystemExit(f"{out} already exists: labels must be unique per render (include palette/cam/style)")
             if it.get("url"):
                 with urllib.request.urlopen(it["url"], timeout=60) as r:
                     out.write_bytes(r.read())

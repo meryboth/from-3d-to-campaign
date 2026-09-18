@@ -21,6 +21,7 @@ MATERIALS = None
 HOUSE_KEYS = ["facade_plaster", "facade_molding", "facade_plinth", "patio_plaster", "party_wall", "interior_wall", "roof",
               "gallery_roof", "wood_door", "wood_shutter", "glass", "iron", "floor_tile", "planter"]
 COLOR_KEYS = ["facade_plaster", "wood_shutter"]
+WALL_KEYS = ["facade_plaster", "patio_plaster"]
 
 
 def material_ids():
@@ -93,7 +94,13 @@ def evaluate(render_path, cam=None):
         if m.sum() > 200:
             delta_e[k] = round(float(np.linalg.norm(lab_r[m].mean(0) - lab_b[m].mean(0))), 1)
             delta_e_wb[k] = round(float(np.linalg.norm(lab_rw[m].mean(0) - lab_bw[m].mean(0))), 1)
-    return {"edge_recall": round(edge_recall, 3), "delta_e": delta_e, "delta_e_wb": delta_e_wb, "house_px": int(house.sum())}
+    # "walls": whatever plaster the camera actually sees (street facade, patio walls)
+    walls = mask_for(ids, WALL_KEYS)
+    walls_frac = float(walls.mean())
+    if walls.sum() > 200:
+        delta_e_wb["walls"] = round(float(np.linalg.norm(lab_rw[walls].mean(0) - lab_bw[walls].mean(0))), 1)
+    return {"edge_recall": round(edge_recall, 3), "delta_e": delta_e, "delta_e_wb": delta_e_wb,
+            "walls_frac": round(walls_frac, 4), "house_px": int(house.sum())}
 
 
 def gray_world(rgb, mask):
