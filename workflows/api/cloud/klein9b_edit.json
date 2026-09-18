@@ -1,0 +1,232 @@
+{
+ "1": {
+  "class_type": "UNETLoader",
+  "_meta": {
+   "title": "unet"
+  },
+  "inputs": {
+   "unet_name": "flux-2-klein-9b.safetensors",
+   "weight_dtype": "default"
+  }
+ },
+ "2": {
+  "class_type": "CLIPLoader",
+  "_meta": {
+   "title": "clip"
+  },
+  "inputs": {
+   "clip_name": "qwen_3_8b_fp8mixed.safetensors",
+   "type": "flux2",
+   "device": "default"
+  }
+ },
+ "3": {
+  "class_type": "VAELoader",
+  "_meta": {
+   "title": "vae"
+  },
+  "inputs": {
+   "vae_name": "full_encoder_small_decoder.safetensors"
+  }
+ },
+ "4": {
+  "class_type": "LoadImage",
+  "_meta": {
+   "title": "beauty_image"
+  },
+  "inputs": {
+   "image": ""
+  }
+ },
+ "5": {
+  "class_type": "VAEEncode",
+  "_meta": {
+   "title": "encode_beauty"
+  },
+  "inputs": {
+   "pixels": [
+    "4",
+    0
+   ],
+   "vae": [
+    "3",
+    0
+   ]
+  }
+ },
+ "6": {
+  "class_type": "CLIPTextEncode",
+  "_meta": {
+   "title": "positive"
+  },
+  "inputs": {
+   "clip": [
+    "2",
+    0
+   ],
+   "text": ""
+  }
+ },
+ "7": {
+  "class_type": "ConditioningZeroOut",
+  "_meta": {
+   "title": "negative"
+  },
+  "inputs": {
+   "conditioning": [
+    "6",
+    0
+   ]
+  }
+ },
+ "8": {
+  "class_type": "ReferenceLatent",
+  "_meta": {
+   "title": "ref_pos"
+  },
+  "inputs": {
+   "conditioning": [
+    "6",
+    0
+   ],
+   "latent": [
+    "5",
+    0
+   ]
+  }
+ },
+ "9": {
+  "class_type": "ReferenceLatent",
+  "_meta": {
+   "title": "ref_neg"
+  },
+  "inputs": {
+   "conditioning": [
+    "7",
+    0
+   ],
+   "latent": [
+    "5",
+    0
+   ]
+  }
+ },
+ "10": {
+  "class_type": "CFGGuider",
+  "_meta": {
+   "title": "guider"
+  },
+  "inputs": {
+   "model": [
+    "1",
+    0
+   ],
+   "positive": [
+    "8",
+    0
+   ],
+   "negative": [
+    "9",
+    0
+   ],
+   "cfg": 1.0
+  }
+ },
+ "11": {
+  "class_type": "RandomNoise",
+  "_meta": {
+   "title": "sampler"
+  },
+  "inputs": {
+   "noise_seed": 1
+  }
+ },
+ "12": {
+  "class_type": "KSamplerSelect",
+  "_meta": {
+   "title": "sampler_select"
+  },
+  "inputs": {
+   "sampler_name": "euler"
+  }
+ },
+ "13": {
+  "class_type": "Flux2Scheduler",
+  "_meta": {
+   "title": "scheduler"
+  },
+  "inputs": {
+   "steps": 4,
+   "width": 1216,
+   "height": 832
+  }
+ },
+ "14": {
+  "class_type": "EmptyFlux2LatentImage",
+  "_meta": {
+   "title": "latent"
+  },
+  "inputs": {
+   "width": 1216,
+   "height": 832,
+   "batch_size": 1
+  }
+ },
+ "15": {
+  "class_type": "SamplerCustomAdvanced",
+  "_meta": {
+   "title": "sample"
+  },
+  "inputs": {
+   "noise": [
+    "11",
+    0
+   ],
+   "guider": [
+    "10",
+    0
+   ],
+   "sampler": [
+    "12",
+    0
+   ],
+   "sigmas": [
+    "13",
+    0
+   ],
+   "latent_image": [
+    "14",
+    0
+   ]
+  }
+ },
+ "16": {
+  "class_type": "VAEDecode",
+  "_meta": {
+   "title": "decode"
+  },
+  "inputs": {
+   "samples": [
+    "15",
+    0
+   ],
+   "vae": [
+    "3",
+    0
+   ]
+  }
+ },
+ "17": {
+  "class_type": "SaveImage",
+  "_meta": {
+   "title": "save"
+  },
+  "inputs": {
+   "images": [
+    "16",
+    0
+   ],
+   "filename_prefix": "casa/klein"
+  }
+ }
+}

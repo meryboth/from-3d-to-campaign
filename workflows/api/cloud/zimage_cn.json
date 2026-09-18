@@ -1,0 +1,183 @@
+{
+ "1": {
+  "class_type": "UNETLoader",
+  "_meta": {
+   "title": "unet"
+  },
+  "inputs": {
+   "unet_name": "z_image_turbo_bf16.safetensors",
+   "weight_dtype": "default"
+  }
+ },
+ "2": {
+  "class_type": "CLIPLoader",
+  "_meta": {
+   "title": "clip"
+  },
+  "inputs": {
+   "clip_name": "qwen_3_4b.safetensors",
+   "type": "lumina2",
+   "device": "default"
+  }
+ },
+ "3": {
+  "class_type": "VAELoader",
+  "_meta": {
+   "title": "vae"
+  },
+  "inputs": {
+   "vae_name": "ae.safetensors"
+  }
+ },
+ "4": {
+  "class_type": "ModelPatchLoader",
+  "_meta": {
+   "title": "controlnet"
+  },
+  "inputs": {
+   "name": "Z-Image-Turbo-Fun-Controlnet-Union.safetensors"
+  }
+ },
+ "5": {
+  "class_type": "LoadImage",
+  "_meta": {
+   "title": "lines_image"
+  },
+  "inputs": {
+   "image": ""
+  }
+ },
+ "6": {
+  "class_type": "QwenImageDiffsynthControlnet",
+  "_meta": {
+   "title": "cn_lines"
+  },
+  "inputs": {
+   "model": [
+    "1",
+    0
+   ],
+   "model_patch": [
+    "4",
+    0
+   ],
+   "vae": [
+    "3",
+    0
+   ],
+   "image": [
+    "5",
+    0
+   ],
+   "strength": 0.9
+  }
+ },
+ "7": {
+  "class_type": "ModelSamplingAuraFlow",
+  "_meta": {
+   "title": "shift"
+  },
+  "inputs": {
+   "model": [
+    "6",
+    0
+   ],
+   "shift": 3.0
+  }
+ },
+ "8": {
+  "class_type": "CLIPTextEncode",
+  "_meta": {
+   "title": "positive"
+  },
+  "inputs": {
+   "clip": [
+    "2",
+    0
+   ],
+   "text": ""
+  }
+ },
+ "9": {
+  "class_type": "ConditioningZeroOut",
+  "_meta": {
+   "title": "negative"
+  },
+  "inputs": {
+   "conditioning": [
+    "8",
+    0
+   ]
+  }
+ },
+ "10": {
+  "class_type": "EmptySD3LatentImage",
+  "_meta": {
+   "title": "latent"
+  },
+  "inputs": {
+   "width": 1216,
+   "height": 832,
+   "batch_size": 1
+  }
+ },
+ "11": {
+  "class_type": "KSampler",
+  "_meta": {
+   "title": "sampler"
+  },
+  "inputs": {
+   "model": [
+    "7",
+    0
+   ],
+   "positive": [
+    "8",
+    0
+   ],
+   "negative": [
+    "9",
+    0
+   ],
+   "latent_image": [
+    "10",
+    0
+   ],
+   "seed": 1,
+   "steps": 8,
+   "cfg": 1.0,
+   "sampler_name": "res_multistep",
+   "scheduler": "simple",
+   "denoise": 1.0
+  }
+ },
+ "12": {
+  "class_type": "VAEDecode",
+  "_meta": {
+   "title": "decode"
+  },
+  "inputs": {
+   "samples": [
+    "11",
+    0
+   ],
+   "vae": [
+    "3",
+    0
+   ]
+  }
+ },
+ "13": {
+  "class_type": "SaveImage",
+  "_meta": {
+   "title": "save"
+  },
+  "inputs": {
+   "images": [
+    "12",
+    0
+   ],
+   "filename_prefix": "casa/zimage"
+  }
+ }
+}

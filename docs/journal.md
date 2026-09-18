@@ -54,3 +54,41 @@ Workflow `workflows/api/cn_depth_lines_sdxl.json`: RealVisXL V5 → two stacked 
 **Quality, first look:** the geometry is respected almost 1:1 (balustrade, pilasters, carved door with fanlight, grilles, shutters). Two problems:
 1. **Color is not controlled.** Seed 1 gave an ochre-and-green facade, seed 2 a pale blue one. For a brand, that's a consistency problem.
 2. **Low-detail context gets hallucinated.** The right street tree (a simple sphere cluster) became a glass canopy and a yellow blob.
+
+## Stage 2b: speed and color experiments (local, $0)
+
+| config | wall | edge recall | ΔE facade | look |
+|---|---|---|---|---|
+| SDXL 30 steps (baseline) | 213 s | 0.58–0.67 | 17–23 | photographic, random color |
+| SDXL 20 steps | 128 s | 0.59 | 23 | same, −40 % time |
+| depth-only ControlNet | 136–171 s | 0.57–0.62 | 21–22 | saves ~20 % at 30 steps, noise at 20 |
+| **SDXL + Lightning LoRA, 8 steps, CFG 1** | **63 s** | 0.49–0.70 | 11–33 | photographic, 3.4× faster |
+| Lightning img2img from beauty, denoise 0.75 | 64–82 s | 0.87–0.90 | 4.6–5.2 | color-faithful but looks CG |
+| standard img2img, 30 steps | 253 s | 0.87 | 5.4 | same as Lightning at 4× the time |
+
+**Takeaways:**
+- On a 6 GB card the lever is step count, not the ControlNet. Lightning wins the local tier.
+- img2img fixes color and geometry, but it inherits the flat CG look of the source. The metrics liked it and the eye didn't, so we need a realism metric.
+- Single runs are noisy on an offloading GPU (E3 was slower than E2). Repeat before quoting numbers.
+
+## Stage 3: Comfy Cloud model bake-off (street camera, 2 seeds)
+
+Creator plan, RTX Pro 6000 (96 GB). Four flat API workflows in `workflows/api/cloud/`, validated with dry runs before spending anything.
+
+| model | approach | GPU s (s1 / s2) | cost per image | edge recall | ΔE facade |
+|---|---|---|---|---|---|
+| Z-Image Turbo + Fun ControlNet Union (lines) | ControlNet, 8 steps | 8.9 / 3.8 | $0.004–0.009 | **0.90–0.92** | 15–22 |
+| FLUX.2 klein 9B | edit from the beauty, 4 steps | 2.7 / 14.3 | $0.003–0.014 | 0.72–0.75 | 16–20 |
+| Qwen-Image + InstantX ControlNet (depth) + Lightning | ControlNet, 4 steps | 13.3 / 2.4 | $0.002–0.013 | 0.63–0.68 | 25–28 |
+| RealVisXL + ControlNet union (parity with local) | — | failed validation: the catalog lists `controlnet-union-sdxl-1.0` but the executor doesn't have it. No GPU billed. | | | |
+
+- Total: **45.4 GPU seconds ≈ 9.3 credits ≈ $0.044** for 6 images. My estimate was 75–125 credits, because I overestimated model load time.
+- The higher number in each pair is the cold start: the first job to load that model.
+- vs local: the best local option costs 63 s of wall time and ~0.7 Wh per image. The cloud runs in 2–4 s warm. Quality-wise, all three cloud models look more photographic than SDXL.
+
+**Reading the images:**
+- **Z-Image** keeps the geometry best of all and has convincing golden-hour light, but its color follows the prompt, not the model (brown shutters in s1).
+- **klein** (edit) gives the richest real-world texture: real trees, weathered plaster, and green shutters carried over from the reference. It adds small details (plinth vents).
+- **Qwen** is the most "photographic" and ornate, but it drifts the most: it invented a door on the left.
+
+**Metric caveat:** ΔE is measured against a flat-lit beauty, so golden-hour prompts are penalized even when the paint color is right. Next: compare hue/chroma after white balance, and add a realism score.
