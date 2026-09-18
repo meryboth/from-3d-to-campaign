@@ -37,3 +37,20 @@ The export ran headless on the integrated AMD GPU (ANGLE/D3D11). Cost: $0.
 **Open questions:**
 - How much will SDXL invent in the patio view? The rooms behind the gallery are shallow.
 - The aerial neighbors are plain boxes, so check whether ControlNet at low strength fills their roofs believably.
+
+## Stage 2: first CAD → render (SDXL + ControlNet union)
+
+Workflow `workflows/api/cn_depth_lines_sdxl.json`: RealVisXL V5 → two stacked `ControlNetApplyAdvanced` on the same union-promax model (depth 0.65 until 80 % of the steps, lines 0.45 until 60 %) → KSampler dpmpp_2m_sde / karras, 30 steps, CFG 5, 1216×832.
+
+| run | wall | sampler | VRAM peak | GPU power avg | energy |
+|---|---|---|---|---|---|
+| seed 1, cold start | 206.1 s (server exec) | n/a (client crashed on a /history race, since fixed) | n/a | n/a | n/a |
+| seed 2, warm | 212.6 s | 192.9 s (~6.4 s/step) | 5,892 MB of 6,144 | 44.8 W | 2.65 Wh |
+
+**Reading the numbers:**
+- Warm and cold cost the same, so the model load isn't the bottleneck; VRAM is. The 5 GB UNet plus the 2.5 GB ControlNet don't fit in 6 GB, so ComfyUI offloads layers every step, and the ControlNet itself is reloaded each run (5.6 s).
+- The two stacked ControlNets mean two ControlNet forward passes per step while both are active.
+
+**Quality, first look:** the geometry is respected almost 1:1 (balustrade, pilasters, carved door with fanlight, grilles, shutters). Two problems:
+1. **Color is not controlled.** Seed 1 gave an ochre-and-green facade, seed 2 a pale blue one. For a brand, that's a consistency problem.
+2. **Low-detail context gets hallucinated.** The right street tree (a simple sphere cluster) became a glass canopy and a yellow blob.
