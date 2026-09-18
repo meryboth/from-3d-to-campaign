@@ -1,0 +1,13 @@
+{
+  "negative": "people, person, car, vehicle, text, lettering, signage, logo, watermark, blurry, lowres, jpeg artifacts, distorted perspective, warped lines, cartoon, illustration, painting, sketch, 3d render, cgi, oversaturated",
+  "subject": {
+    "street": "real estate photograph of a restored early-1900s Italianate row house in Buenos Aires, single storey, lime-plaster facade with pilasters, ornate cornice and stone balustrade parapet, tall wooden shutters, wrought iron window grilles, carved wooden front door with fanlight, tiled sidewalk and plane trees, neighbouring houses on both sides",
+    "aerial": "aerial real estate photograph of a long narrow Buenos Aires row house (casa chorizo) seen from above at an angle, flat roof terraces, a row of rooms along a courtyard, cast-iron gallery, checkerboard tiled patio, back garden with trees, dense neighbourhood of low houses around it",
+    "patio": "real estate photograph inside the courtyard of a restored Buenos Aires casa chorizo, black and white checkerboard marble floor, slender cast-iron columns holding a gallery roof, tall double glass doors with wooden shutters, potted plants, lime-plaster walls, sky above"
+  },
+  "styles": {
+    "restored": "warm late afternoon sunlight, golden hour, clear blue sky, cream and ochre plaster, dark green shutters, freshly restored, crisp shadows, architectural photography, 24mm lens, sharp focus, high detail",
+    "contemporary": "soft overcast daylight, white-washed plaster, black steel window frames, minimalist contemporary renovation, pale natural wood, clean and airy, editorial architectural photography, 24mm lens, sharp focus",
+    "dusk": "blue hour at dusk, warm interior lights glowing through the windows, soft wall lights, deep blue sky, cozy and inviting, long exposure architectural photography, 24mm lens, sharp focus"
+  }
+}
