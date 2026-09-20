@@ -1,7 +1,7 @@
 [project]
 name = "from-3d-to-campaign"
 description = "Turn a 3D model of a building into social-ready campaign assets: geometry-faithful renders, an automatic quality gate, validated copy and a laid-out post — all in one ComfyUI graph."
-version = "0.1.1"
+version = "0.1.2"
 license = { file = "LICENSE" }
 requires-python = ">=3.10"
 dependencies = ["numpy>=2", "pillow>=11", "websocket-client>=1.8"]
@@ -19,7 +19,6 @@ Repository = "https://github.com/meryboth/from-3d-to-campaign"
 # and `comfy node publish` fails if it does not match the account holding the API key.
 PublisherId = "meryboth"
 DisplayName = "From 3D to Campaign"
-Icon = ""
 requires-comfyui = ">=0.3.40"
 
 # The realism metrics (open_clip_torch, pyiqa) are deliberately NOT dependencies: both
