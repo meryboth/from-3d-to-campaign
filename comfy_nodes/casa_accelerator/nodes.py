@@ -19,7 +19,7 @@ sys.path.insert(0, str(REPO / "pipeline"))
 import qa as qa_mod  # noqa: E402
 from design import BRAND, C, Canvas, contrast_ratio, hex_rgb  # noqa: E402
 
-CATEGORY = "casa accelerator"
+CATEGORY = "from 3d to campaign"
 
 
 # ---- tensor helpers ---------------------------------------------------------

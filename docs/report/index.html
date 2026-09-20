@@ -260,7 +260,7 @@ footer{border-top:1px solid var(--line);padding:44px 0 70px;font-size:14px;color
       </tbody>
     </table>
     <figure class="two" style="align-items:center">
-      <img src="assets/graph-nodes.png" alt="Detail of the six custom casa-accelerator nodes in ComfyUI">
+      <img src="assets/graph-nodes.png" alt="Detail of the seven custom from-3d-to-campaign nodes in ComfyUI">
       <div>
         <h3>The six custom nodes</h3>
         <p class="muted" style="font-size:16px">They are the part of the pipeline that is <em>ours</em>:
@@ -544,16 +544,18 @@ git clone https://github.com/meryboth/from-3d-to-campaign</code></pre>
     <h3 style="margin-top:44px">Install and run</h3>
     <ol class="steps">
       <li>
-        <h3>Clone the repo and its node pack</h3>
-        <p>The pack is a thin wrapper: a loader in <span class="mono">custom_nodes</span> that points
-          ComfyUI at the repo's <span class="mono">comfy_nodes</span> folder, so one checkout serves both
-          the graph and the command line.</p>
-<pre><code>git clone https://github.com/&lt;user&gt;/casa-accelerator
-cd casa-accelerator &amp;&amp; npm install        # Three.js scene + headless exporter
-python -m venv .venv &amp;&amp; .venv/Scripts/pip install -r requirements.txt</code></pre>
-<pre><code># ComfyUI/custom_nodes/casa-accelerator/__init__.py
-import sys; sys.path.insert(0, r"&lt;path-to&gt;/casa-accelerator/comfy_nodes")
-from casa_accelerator import NODE_CLASS_MAPPINGS, NODE_DISPLAY_NAME_MAPPINGS</code></pre>
+        <h3>Install the pack</h3>
+        <p>From the ComfyUI Manager, search <em>From 3D to Campaign</em>. Or clone it — one checkout
+          serves both the graph and the command line, because the nodes call the same modules the CLI
+          does.</p>
+<pre><code>cd ComfyUI/custom_nodes
+git clone https://github.com/meryboth/from-3d-to-campaign
+cd from-3d-to-campaign
+npm install                                 # Three.js scene + headless exporter
+python -m venv .venv &amp;&amp; .venv/Scripts/pip install -r requirements-dev.txt</code></pre>
+      <p>The repo's own <span class="mono">__init__.py</span> is the entry point, so there is no loader
+        stub to write: ComfyUI finds the seven nodes under <strong>from 3d to campaign</strong> after a
+        restart.</p>
       </li>
       <li>
         <h3>Install the metric dependencies into ComfyUI's Python</h3>

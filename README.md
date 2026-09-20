@@ -140,7 +140,7 @@ cd from-3d-to-campaign
 npm install                     # the Three.js scene + headless exporter
 ```
 
-Restart ComfyUI. Seven nodes appear under **casa accelerator**.
+Restart ComfyUI. Seven nodes appear under **from 3d to campaign**.
 
 The realism metrics are optional and are *not* declared as dependencies, because both packages pull
 their own torch build and would replace the CUDA one ComfyUI runs on. To enable them:
