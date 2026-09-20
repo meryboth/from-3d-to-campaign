@@ -1,0 +1,374 @@
+{
+ "1": {
+  "class_type": "LoadImage",
+  "_meta": {
+   "title": "beauty_image"
+  },
+  "inputs": {
+   "image": "casa/street_beauty.png"
+  }
+ },
+ "2": {
+  "class_type": "LoadImage",
+  "_meta": {
+   "title": "normal_image"
+  },
+  "inputs": {
+   "image": "casa/street_normal.png"
+  }
+ },
+ "3": {
+  "class_type": "CasaPasses",
+  "_meta": {
+   "title": "passes"
+  },
+  "inputs": {
+   "normal": [
+    "2",
+    0
+   ],
+   "crease_degrees": 35.0,
+   "line_gain": 1.6,
+   "silhouette": true
+  }
+ },
+ "4": {
+  "class_type": "CheckpointLoaderSimple",
+  "_meta": {
+   "title": "ckpt"
+  },
+  "inputs": {
+   "ckpt_name": "RealVisXL_V5.0_fp16.safetensors"
+  }
+ },
+ "5": {
+  "class_type": "LoraLoaderModelOnly",
+  "_meta": {
+   "title": "lora"
+  },
+  "inputs": {
+   "model": [
+    "4",
+    0
+   ],
+   "lora_name": "sdxl_lightning_8step_lora.safetensors",
+   "strength_model": 1.0
+  }
+ },
+ "6": {
+  "class_type": "CLIPTextEncode",
+  "_meta": {
+   "title": "positive"
+  },
+  "inputs": {
+   "clip": [
+    "4",
+    1
+   ],
+   "text": ""
+  }
+ },
+ "7": {
+  "class_type": "CLIPTextEncode",
+  "_meta": {
+   "title": "negative"
+  },
+  "inputs": {
+   "clip": [
+    "4",
+    1
+   ],
+   "text": ""
+  }
+ },
+ "8": {
+  "class_type": "ControlNetLoader",
+  "_meta": {
+   "title": "controlnet"
+  },
+  "inputs": {
+   "control_net_name": "controlnet-union-sdxl-promax.safetensors"
+  }
+ },
+ "9": {
+  "class_type": "SetUnionControlNetType",
+  "_meta": {
+   "title": "type_lines"
+  },
+  "inputs": {
+   "control_net": [
+    "8",
+    0
+   ],
+   "type": "canny/lineart/anime_lineart/mlsd"
+  }
+ },
+ "10": {
+  "class_type": "ControlNetApplyAdvanced",
+  "_meta": {
+   "title": "cn_lines"
+  },
+  "inputs": {
+   "positive": [
+    "6",
+    0
+   ],
+   "negative": [
+    "7",
+    0
+   ],
+   "control_net": [
+    "9",
+    0
+   ],
+   "image": [
+    "3",
+    0
+   ],
+   "vae": [
+    "4",
+    2
+   ],
+   "strength": 0.6,
+   "start_percent": 0.0,
+   "end_percent": 0.7
+  }
+ },
+ "11": {
+  "class_type": "EmptyLatentImage",
+  "_meta": {
+   "title": "latent"
+  },
+  "inputs": {
+   "width": 1216,
+   "height": 832,
+   "batch_size": 1
+  }
+ },
+ "12": {
+  "class_type": "KSampler",
+  "_meta": {
+   "title": "sampler"
+  },
+  "inputs": {
+   "model": [
+    "5",
+    0
+   ],
+   "positive": [
+    "10",
+    0
+   ],
+   "negative": [
+    "10",
+    1
+   ],
+   "latent_image": [
+    "11",
+    0
+   ],
+   "seed": 1,
+   "steps": 8,
+   "cfg": 1.0,
+   "sampler_name": "euler",
+   "scheduler": "sgm_uniform",
+   "denoise": 1.0
+  }
+ },
+ "13": {
+  "class_type": "VAEDecode",
+  "_meta": {
+   "title": "decode"
+  },
+  "inputs": {
+   "samples": [
+    "12",
+    0
+   ],
+   "vae": [
+    "4",
+    2
+   ]
+  }
+ },
+ "14": {
+  "class_type": "CasaQAGate",
+  "_meta": {
+   "title": "gate"
+  },
+  "inputs": {
+   "render": [
+    "13",
+    0
+   ],
+   "reference": [
+    "1",
+    0
+   ],
+   "lines": [
+    "3",
+    0
+   ],
+   "edge_recall_min": 0.7,
+   "delta_e_max": 10.0,
+   "check_color": true,
+   "check_realism": true,
+   "niqe_max": 5.0,
+   "p_photo_min": 0.5
+  }
+ },
+ "15": {
+  "class_type": "UpscaleModelLoader",
+  "_meta": {
+   "title": "upscaler"
+  },
+  "inputs": {
+   "model_name": "RealESRGAN_x4plus.pth"
+  }
+ },
+ "16": {
+  "class_type": "ImageUpscaleWithModel",
+  "_meta": {
+   "title": "upscale"
+  },
+  "inputs": {
+   "upscale_model": [
+    "15",
+    0
+   ],
+   "image": [
+    "13",
+    0
+   ]
+  }
+ },
+ "17": {
+  "class_type": "ImageScaleBy",
+  "_meta": {
+   "title": "down_to_2x"
+  },
+  "inputs": {
+   "image": [
+    "16",
+    0
+   ],
+   "upscale_method": "lanczos",
+   "scale_by": 0.5
+  }
+ },
+ "18": {
+  "class_type": "CasaCopySpec",
+  "_meta": {
+   "title": "copy_prompt"
+  },
+  "inputs": {
+   "language": "es",
+   "piece": "street_restored",
+   "scene_note": "Fachada desde la vereda de enfrente, hora dorada.",
+   "slots": "{\n \"claim\": {\n  \"max_chars\": 42,\n  \"what\": \"the post's claim, lowercase, no period\"\n },\n \"headline\": {\n  \"max_chars\": 38,\n  \"what\": \"headline for this image\"\n },\n \"caption\": {\n  \"max_chars\": 90,\n  \"what\": \"one sentence under the image\"\n },\n \"post_caption\": {\n  \"max_chars\": 420,\n  \"what\": \"the caption of the post, 2 short paragraphs\"\n },\n \"cta\": {\n  \"max_chars\": 26,\n  \"what\": \"call to action, imperative\"\n }\n}"
+  }
+ },
+ "19": {
+  "class_type": "ClaudeNode",
+  "_meta": {
+   "title": "llm"
+  },
+  "inputs": {
+   "prompt": [
+    "18",
+    1
+   ],
+   "system_prompt": [
+    "18",
+    0
+   ],
+   "model": "Haiku 4.5",
+   "seed": 1,
+   "model.max_tokens": 4096,
+   "model.temperature": 1.0
+  }
+ },
+ "20": {
+  "class_type": "CasaCopyCheck",
+  "_meta": {
+   "title": "copy_check"
+  },
+  "inputs": {
+   "llm_output": [
+    "19",
+    0
+   ],
+   "slots_json": [
+    "18",
+    2
+   ],
+   "language": "es"
+  }
+ },
+ "21": {
+  "class_type": "CasaLayout",
+  "_meta": {
+   "title": "layout"
+  },
+  "inputs": {
+   "image": [
+    "17",
+    0
+   ],
+   "format": "feed",
+   "template": "cover",
+   "language": "es",
+   "headline": [
+    "20",
+    2
+   ],
+   "caption": "",
+   "meta_left": "VILLA CRESPO, BUENOS AIRES",
+   "meta_right": "8,66 x 50 M"
+  }
+ },
+ "22": {
+  "class_type": "SaveImage",
+  "_meta": {
+   "title": "save_asset"
+  },
+  "inputs": {
+   "images": [
+    "21",
+    0
+   ],
+   "filename_prefix": "casa/graph_feed"
+  }
+ },
+ "23": {
+  "class_type": "PreviewImage",
+  "_meta": {
+   "title": "preview_render"
+  },
+  "inputs": {
+   "images": [
+    "13",
+    0
+   ]
+  }
+ },
+ "24": {
+  "class_type": "CasaLogRun",
+  "_meta": {
+   "title": "log"
+  },
+  "inputs": {
+   "stage": "graph_render",
+   "item": "street/restored",
+   "backend": "local_comfyui",
+   "seconds": 0.0,
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "cost_usd": 0.0,
+   "notes": [
+    "14",
+    1
+   ]
+  }
+ }
+}
