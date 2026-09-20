@@ -12,7 +12,7 @@ classifiers = [
 ]
 
 [project.urls]
-Repository = "https://github.com/meryboth/from-3d-to-campaing"
+Repository = "https://github.com/meryboth/from-3d-to-campaign"
 
 [tool.comfy]
 # PublisherId is the handle after the "@" on your registry profile. It is permanent,

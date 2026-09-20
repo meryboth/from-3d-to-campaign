@@ -132,7 +132,7 @@ per approved piece, **$0.021**.
 
 ```bash
 cd ComfyUI/custom_nodes
-git clone https://github.com/meryboth/from-3d-to-campaing from-3d-to-campaign
+git clone https://github.com/meryboth/from-3d-to-campaign
 cd from-3d-to-campaign
 npm install                     # the Three.js scene + headless exporter
 ```
@@ -164,7 +164,7 @@ licences:
 ### As a standalone pipeline
 
 ```bash
-git clone https://github.com/meryboth/from-3d-to-campaing && cd from-3d-to-campaing
+git clone https://github.com/meryboth/from-3d-to-campaign && cd from-3d-to-campaign
 npm install
 python -m venv .venv && .venv/Scripts/pip install -r requirements-dev.txt
 ```
