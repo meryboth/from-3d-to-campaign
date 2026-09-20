@@ -70,6 +70,21 @@ def qa_text(cv, box, fill, role, issues, where):
 
 # ---------- slides ----------
 
+def lockup(cv, mark_px, text_dx, text_dy, issues, where):
+    """Mark + wordmark over a photo: they ride on an ink chip, because a gradient cannot
+    guarantee contrast against a sky that changes with every render."""
+    t = cv.tok("body")
+    pad = round(14 * cv.k)
+    x, y = round(cv.col(0)), round(cv.safe[1])
+    w = round(text_dx * cv.k + cv.width_of(BRAND["wordmark"], t) + pad)
+    h = round(max(mark_px * cv.k, t["px"] * 1.35) + pad)
+    cv.plate((x - pad, y - pad * 0.8, w + pad, h + pad * 0.6), C["ink"], 0.86, radius=4 * cv.k)
+    draw_mark(cv.img, (x, y), round(mark_px * cv.k), C["paper"])
+    qa_text(cv, (x + text_dx * cv.k, y + text_dy * cv.k, cv.width_of(BRAND["wordmark"], t), t["px"] * 1.2),
+            C["paper"], "body", issues, f"{where} wordmark")
+    cv.text((x + text_dx * cv.k, y + text_dy * cv.k), BRAND["wordmark"], "body", C["paper"])
+
+
 def slide_cover(post, lang, issues):
     cv = Canvas("feed")
     cv.place_image(master(post["cover"]), (0, 0, cv.w, cv.h))
@@ -82,8 +97,7 @@ def slide_cover(post, lang, issues):
     y = cv.text((cv.col(0), y), claim, "display", C["paper"], cv.span(10))
     p = COPY["project"]
     meta_row(cv, y + 34 * cv.k, f"{p['neighbourhood']}", f"{p['lot']}", "#CFCABE")
-    draw_mark(cv.img, (round(cv.col(0)), round(cv.safe[1])), round(56 * cv.k), C["paper"])
-    cv.text((cv.col(0) + 72 * cv.k, cv.safe[1] + 12 * cv.k), BRAND["wordmark"], "body", C["paper"])
+    lockup(cv, 56, 72, 12, issues, f"cover/{lang}")
     cv.text((cv.w - cv.col(0), cv.safe[1] + 16 * cv.k), DEV["index_format"].format(n=1), "meta", "#CFCABE", align="right")
     return cv
 
@@ -145,8 +159,7 @@ def slide_story(post, lang, issues):
     p, L = COPY["project"], COPY["labels"][lang]
     cv.text((cv.col(0), y + 24 * cv.k), f"{p['rooms']} {L['rooms']} · {p['area_m2']} {L['area']} · {L['from']} USD {p['price_usd']:,}".replace(",", "."), "body", "#DCD8CE")
     cv.text((cv.col(0), cv.h - cv.safe[3] - 6 * cv.k), COPY["cta"][lang], "meta", C["accent_on_dark"])
-    draw_mark(cv.img, (round(cv.col(0)), round(cv.safe[1])), round(56 * cv.k), C["paper"])
-    cv.text((cv.col(0) + 74 * cv.k, cv.safe[1] + 14 * cv.k), BRAND["wordmark"], "body", C["paper"])
+    lockup(cv, 56, 74, 14, issues, f"story/{lang}")
     cv.text((cv.col(0), cv.h - cv.safe[3] + 44 * cv.k), BRAND["legal"]["ai_disclosure"][lang], "caption", "#9A958A")
     return cv
 

@@ -46,3 +46,13 @@ Headless rendering uses the system's Microsoft Edge through `playwright-core`, s
 ## Docs
 
 - [`docs/journal.md`](docs/journal.md): the lab notebook, with decisions, numbers and what I learned at each stage.
+
+## The case study
+
+The full write-up — pipeline, control signals, model bake-off, quality gate, cost model, rights and a
+plug-and-play guide — is a page in this repo: [`docs/report/index.html`](docs/report/index.html).
+
+```bash
+python scripts/report_assets.py      # rebuild its figures from the latest runs
+python -m http.server 8010 -d docs/report
+```

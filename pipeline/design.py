@@ -157,6 +157,14 @@ class Canvas:
             gd.line([(0, i), (w, i)], fill=(14, 12, 10, int(255 * strength * p ** 1.25)))
         self.img.paste(g, (x, y), g)
 
+    def plate(self, box, color=None, alpha=0.88, radius=0):
+        """A flat chip behind a small type block — a scrim cannot carry a logo over a bright sky."""
+        x, y, w, h = [round(v) for v in box]
+        g = Image.new("RGBA", (w, h), (0, 0, 0, 0))
+        ImageDraw.Draw(g).rounded_rectangle([0, 0, w - 1, h - 1], radius=round(radius),
+                                            fill=hex_rgb(color or C["ink"]) + (int(255 * alpha),))
+        self.img.paste(g, (x, y), g)
+
     def save(self, path, quality=93):
         Path(path).parent.mkdir(parents=True, exist_ok=True)
         self.img.save(path, quality=quality, subsampling=0)

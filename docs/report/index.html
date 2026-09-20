@@ -1,0 +1,682 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Casa Accelerator</title>
+<meta name="description" content="A generative-AI production pipeline that turns a 3D model of a building into social-ready campaign assets, with a quality gate and a cost line for every piece.">
+<style>
+@font-face{font-family:Switzer;src:url("assets/fonts/Switzer-Variable.ttf") format("truetype-variations");font-weight:100 900;font-display:swap}
+
+:root{
+  --paper:#EFECE3; --ink:#12100E; --accent:#C8511E; --accent-dark:#F0764A;
+  --muted:#6E6A62; --line:#D6D2C6; --card:#E7E3D8; --chip:#12100E;
+  --maxw:1180px; --gut:24px;
+  --f-display:clamp(44px,7.2vw,104px); --f-h2:clamp(28px,3.6vw,46px);
+  --f-h3:clamp(20px,2.1vw,26px); --f-body:clamp(16px,1.25vw,19px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){--paper:#121110; --ink:#EFECE3; --accent:#F0764A;
+    --muted:#9A948A; --line:#2B2926; --card:#1A1917}
+}
+:root[data-theme="dark"]{--paper:#121110; --ink:#EFECE3; --accent:#F0764A;
+  --muted:#9A948A; --line:#2B2926; --card:#1A1917}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--paper);color:var(--ink);
+  font-family:Switzer,-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  font-size:var(--f-body);line-height:1.55;font-weight:400;
+  -webkit-font-smoothing:antialiased;overflow-x:hidden}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 var(--gut)}
+section{padding:clamp(56px,7vw,110px) 0;border-top:1px solid var(--line)}
+section:first-of-type{border-top:0}
+
+h1,h2,h3{font-weight:600;letter-spacing:-0.025em;line-height:1.02;margin:0}
+h2{font-size:var(--f-h2);max-width:16ch}
+h3{font-size:var(--f-h3);letter-spacing:-0.015em;line-height:1.2}
+p{margin:0 0 1.1em}
+a{color:inherit;text-decoration:none;border-bottom:1px solid var(--accent);padding-bottom:1px}
+a:hover{color:var(--accent)}
+strong{font-weight:600}
+code,.mono{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;font-size:0.88em;
+  background:var(--card);padding:1px 5px;border-radius:3px}
+
+.eyebrow{font-size:12px;font-weight:600;letter-spacing:0.16em;text-transform:uppercase;
+  color:var(--accent);margin:0 0 18px}
+.lede{font-size:clamp(19px,1.9vw,25px);line-height:1.38;letter-spacing:-0.01em;max-width:34ch;font-weight:500}
+.body-col{max-width:64ch}
+.muted{color:var(--muted)}
+.rule{height:1px;background:var(--line);margin:28px 0;border:0}
+
+/* hero */
+.hero{padding-top:clamp(40px,6vw,86px)}
+.hero h1{font-size:var(--f-display);letter-spacing:-0.04em;margin:0 0 22px}
+.hero-sub{display:grid;grid-template-columns:1.25fr 1fr;gap:40px;align-items:end}
+.hero-fig{margin:clamp(30px,4vw,54px) 0 0}
+.hero-fig img{width:100%;display:block;border-radius:2px}
+.meta-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;
+  border-top:1px solid var(--line);margin-top:34px;padding-top:18px}
+.meta-strip dt{font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);margin-bottom:5px}
+.meta-strip dd{margin:0;font-size:15px;font-weight:500;line-height:1.35}
+
+/* numbers */
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);
+  border:1px solid var(--line)}
+.kpi{background:var(--paper);padding:26px 22px 22px}
+.kpi b{display:block;font-size:clamp(30px,3.4vw,44px);font-weight:600;letter-spacing:-0.03em;line-height:1}
+.kpi span{display:block;font-size:13px;color:var(--muted);margin-top:9px;line-height:1.35}
+
+/* figures */
+figure{margin:clamp(26px,3.5vw,48px) 0 0}
+figure img{width:100%;display:block;border-radius:2px;background:var(--card)}
+figcaption{font-size:14px;color:var(--muted);margin-top:12px;max-width:72ch}
+.bleed{max-width:1420px;margin-left:auto;margin-right:auto;padding:0 var(--gut)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:clamp(20px,3vw,40px);align-items:start}
+.three{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(16px,2.2vw,28px)}
+.three img{width:100%;display:block;border-radius:2px}
+
+/* tables */
+.tbl{width:100%;border-collapse:collapse;margin:26px 0 0;font-size:15px}
+.tbl th,.tbl td{text-align:left;padding:11px 14px 11px 0;border-bottom:1px solid var(--line);vertical-align:top}
+.tbl th{font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.tbl td.num{font-variant-numeric:tabular-nums;white-space:nowrap}
+.pass{color:var(--accent);font-weight:600}
+
+/* cards / steps */
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1px;
+  background:var(--line);border:1px solid var(--line);margin-top:30px}
+.card{background:var(--paper);padding:24px 22px}
+.card h3{margin-bottom:9px}
+.card p{font-size:15px;margin:0;color:var(--muted)}
+ol.steps{counter-reset:s;list-style:none;padding:0;margin:30px 0 0}
+ol.steps>li{counter-increment:s;border-top:1px solid var(--line);padding:22px 0 22px 62px;position:relative}
+ol.steps>li::before{content:counter(s,decimal-leading-zero);position:absolute;left:0;top:22px;
+  font-size:13px;font-weight:600;letter-spacing:0.08em;color:var(--accent)}
+ol.steps h3{margin-bottom:7px}
+ol.steps p{margin:0 0 .6em;max-width:70ch}
+pre{background:var(--card);border-left:2px solid var(--accent);padding:15px 17px;overflow-x:auto;
+  font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;font-size:13.5px;line-height:1.6;margin:14px 0}
+pre code{background:none;padding:0}
+ul.ticks{list-style:none;padding:0;margin:18px 0 0}
+ul.ticks li{padding:9px 0 9px 26px;border-top:1px solid var(--line);position:relative;font-size:16px}
+ul.ticks li::before{content:"→";position:absolute;left:0;color:var(--accent)}
+
+/* charts */
+.chart{width:100%;height:auto;display:block;margin-top:10px}
+.chart text{font-family:Switzer,sans-serif;fill:var(--ink)}
+.chart .lbl{font-size:13px;font-weight:500}
+.chart .val{font-size:13px;font-weight:600;font-variant-numeric:tabular-nums}
+.chart .ax{font-size:11px;fill:var(--muted);letter-spacing:.1em;text-transform:uppercase}
+.chart .bar{fill:var(--ink)}
+.chart .bar.hi{fill:var(--accent)}
+.chart .grid{stroke:var(--line);stroke-width:1}
+
+/* nav + footer */
+.topbar{position:sticky;top:0;z-index:10;background:color-mix(in srgb,var(--paper) 88%,transparent);
+  backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.topbar .wrap{display:flex;gap:22px;align-items:center;height:52px;overflow-x:auto;scrollbar-width:none}
+.topbar .wrap::-webkit-scrollbar{display:none}
+.topbar a{border:0;font-size:13px;color:var(--muted);white-space:nowrap}
+.topbar a:hover{color:var(--ink)}
+.topbar .brand{display:flex;align-items:center;gap:9px;font-size:14px;font-weight:600;color:var(--ink);margin-right:auto}
+.mark{width:17px;height:17px;flex:0 0 auto}
+footer{border-top:1px solid var(--line);padding:44px 0 70px;font-size:14px;color:var(--muted)}
+.disclaimer{background:var(--card);border-left:2px solid var(--accent);padding:16px 18px;font-size:15px;margin:30px 0 0}
+
+@media (max-width:860px){
+  .hero-sub{grid-template-columns:1fr;gap:22px}
+  .meta-strip{grid-template-columns:1fr 1fr;gap:16px}
+  .kpis{grid-template-columns:1fr 1fr}
+  .two,.three{grid-template-columns:1fr}
+  h2{max-width:none}
+}
+</style>
+</head>
+<body>
+
+<nav class="topbar">
+  <div class="wrap">
+    <span class="brand">
+      <svg class="mark" viewBox="0 0 24 24" aria-hidden="true"><path d="M0 6a6 6 0 0 1 6-6h18v18a6 6 0 0 1-6 6H0Z" fill="currentColor"/></svg>
+      Casa Accelerator
+    </span>
+    <a href="#pipeline">Pipeline</a>
+    <a href="#control">Control</a>
+    <a href="#models">Models</a>
+    <a href="#gate">Quality gate</a>
+    <a href="#copy">Copy</a>
+    <a href="#design">Design</a>
+    <a href="#cost">Cost</a>
+    <a href="#plug">Plug &amp; play</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap">
+    <p class="eyebrow">R&amp;D case study · 2026</p>
+    <h1>One 3D model in,<br>a campaign out.</h1>
+    <div class="hero-sub">
+      <p class="lede">A production pipeline that turns the 3D model of a building into social-ready
+        campaign assets — stills, copy, formats and languages — with a quality gate that protects the
+        architecture and a cost line for every piece.</p>
+      <p class="muted" style="font-size:15px;margin:0">Built as ComfyUI custom nodes, so the whole
+        thing runs as one graph instead of a person gluing scripts together. Every number on this page
+        comes from a run log, a billing feed or a tool response.</p>
+    </div>
+    <dl class="meta-strip">
+      <div><dt>Role</dt><dd>Pipeline design, 3D scene, ComfyUI nodes, QA, design system</dd></div>
+      <div><dt>Client</dt><dd><em>form and order</em> — fictional developer, invented for this R&amp;D</dd></div>
+      <div><dt>Stack</dt><dd>Three.js · ComfyUI · SDXL + ControlNet · FLUX.2 klein · Claude Haiku 4.5 · Python</dd></div>
+      <div><dt>Total spend</dt><dd>$0.145 across every benchmark, A/B and rejected render</dd></div>
+    </dl>
+    <figure class="hero-fig">
+      <img src="assets/hero.jpg" alt="Photoreal render of a restored Buenos Aires row house, generated from the project's 3D model">
+      <figcaption>Output of the master graph, starting from the 3D scene: gate PASS — edge recall 0.882, ΔE 1.5, NIQE 4.37, 133 s on a 6 GB laptop GPU.</figcaption>
+    </figure>
+  </div>
+</header>
+
+<section id="why">
+  <div class="wrap">
+    <p class="eyebrow">The problem</p>
+    <h2>Architecture renders are trustworthy and slow. Generative images are fast and lie.</h2>
+    <div class="two" style="margin-top:34px">
+      <div class="body-col">
+        <p>A developer marketing a building has one 3D model and needs fifty pieces of content: the
+          street shot, the patio at dusk, the aerial, each of them cropped for feed, story and link,
+          each in the languages the audience speaks, each with copy that does not invent a second
+          bathroom.</p>
+        <p>Hand-rendering that is slow. Prompting an image model is fast and produces a building that
+          does not exist — which, in real estate, is not a style problem. An image that adds a balcony
+          is a legal one.</p>
+      </div>
+      <div class="body-col">
+        <p>So the interesting question is not "can a model make a pretty house". It is: <strong>can a
+          pipeline be fast and still be held to the geometry of the actual project</strong> — and can
+          it prove it, per image, in numbers a team would accept.</p>
+        <p>This project is the attempt. It renders a house from a data spec, drives the generative
+          models with signals taken from the geometry itself, and then measures the result against
+          that same geometry before anything reaches a layout.</p>
+      </div>
+    </div>
+    <div class="disclaimer">
+      <strong>Everything here is hypothetical.</strong> The developer <em>form and order</em>, the
+      project <em>Casa Larga 1408</em> and its figures are invented for this R&amp;D. No real brand,
+      listing or company is represented, and every published asset carries an AI disclosure.
+    </div>
+  </div>
+</section>
+
+<section id="numbers">
+  <div class="wrap">
+    <p class="eyebrow">Headline numbers</p>
+    <div class="kpis">
+      <div class="kpi"><b>$0.145</b><span>Total spend of the whole project — every benchmark, A/B and rejected render included</span></div>
+      <div class="kpi"><b>$0.021</b><span>Cost per approved piece, R&amp;D amortised</span></div>
+      <div class="kpi"><b>4.2 s</b><span>GPU time per cloud render, warm (RTX 6000 Pro)</span></div>
+      <div class="kpi"><b>4.0 s</b><span>To lay out a full post package: 7 assets × 3 languages, $0</span></div>
+    </div>
+    <p class="muted" style="font-size:14px;margin-top:14px">Sources: <span class="mono">out/runs.jsonl</span>,
+      the Comfy Cloud billing feed, <span class="mono">docs/costs.md</span>. Local time is measured with
+      <span class="mono">nvidia-smi</span> sampling (power draw × duration), priced at $0.10/kWh.</p>
+  </div>
+</section>
+
+<section id="pipeline">
+  <div class="wrap">
+    <p class="eyebrow">The pipeline</p>
+    <h2>Seven stages, one graph.</h2>
+    <p class="body-col" style="margin-top:22px">The whole thing runs inside ComfyUI: 22 nodes, from
+      the 3D scene to a finished social asset and a line in the run log. Six of those nodes are custom;
+      the rest are stock. The custom ones are deliberately thin — each calls the same Python module the
+      command-line pipeline uses, so the graph and the batch script cannot drift apart.</p>
+  </div>
+  <div class="bleed">
+    <figure>
+      <img src="assets/graph-master.png" alt="The master ComfyUI graph, arranged in seven stage columns">
+      <figcaption>The master graph. Stage 1 renders the house; stages 2–4 generate; stage 5 measures and
+        upscales; stage 6 writes and validates copy; stage 7 lays out the asset and logs the run.</figcaption>
+    </figure>
+  </div>
+  <div class="wrap">
+    <table class="tbl">
+      <thead><tr><th style="width:22%">Stage</th><th style="width:30%">Nodes</th><th>What happens</th></tr></thead>
+      <tbody>
+        <tr><td><strong>1 · 3D scene in</strong></td><td class="mono">render_3d</td>
+          <td>Renders the house from <span class="mono">scene/house.json</span> and hands the graph beauty, depth, normals, lines and a house mask. Content-hash cached.</td></tr>
+        <tr><td><strong>2 · Models</strong></td><td class="mono">ckpt · lora · controlnet · upscaler</td>
+          <td>RealVisXL V5, SDXL-Lightning 8-step LoRA, xinsir ControlNet Union, Real-ESRGAN. Loaded once.</td></tr>
+        <tr><td><strong>3 · Conditioning</strong></td><td class="mono">positive · negative · encode_beauty · cn_lines</td>
+          <td>The beauty pass is VAE-encoded as the starting latent (denoise 0.85); the line pass drives ControlNet at 0.70.</td></tr>
+        <tr><td><strong>4 · Sampling</strong></td><td class="mono">sampler · decode</td>
+          <td>8 steps, CFG 1.0, euler / sgm_uniform.</td></tr>
+        <tr><td><strong>5 · Quality gate</strong></td><td class="mono">gate · upscale · down_to_2x</td>
+          <td>Edge recall, ΔE after white balance, NIQE, CLIP photo-vs-CG. Then 4× Real-ESRGAN and back down to 2×.</td></tr>
+        <tr><td><strong>6 · Copy</strong></td><td class="mono">copy_prompt · llm · copy_check</td>
+          <td>A system prompt built from the brand voice and a fact whitelist, then JSON validation with character limits.</td></tr>
+        <tr><td><strong>7 · Layout &amp; log</strong></td><td class="mono">layout · save_asset · log</td>
+          <td>The designed asset, plus one line in <span class="mono">runs.jsonl</span> with seconds, tokens and cost.</td></tr>
+      </tbody>
+    </table>
+    <figure class="two" style="align-items:center">
+      <img src="assets/graph-nodes.png" alt="Detail of the six custom casa-accelerator nodes in ComfyUI">
+      <div>
+        <h3>The six custom nodes</h3>
+        <p class="muted" style="font-size:16px">They are the part of the pipeline that is <em>ours</em>:
+          render the 3D passes, gate the result, build the copy prompt, check what the LLM returned, lay
+          out the asset, log the run. Everything else is stock ComfyUI.</p>
+        <p class="muted" style="font-size:16px">A note on <span class="mono">Load3D</span>: it looks like
+          the obvious way to bring a GLB into the graph, and it does not work here. It renders in the
+          browser frontend, so a headless or queued run produces nothing. Hence
+          <span class="mono">CasaRender3D</span>, which shells out to the same Playwright exporter the CLI uses.</p>
+      </div>
+    </figure>
+  </div>
+</section>
+
+<section id="control">
+  <div class="wrap">
+    <p class="eyebrow">Control signals</p>
+    <h2>The scene already knows what is a wall.</h2>
+    <p class="body-col" style="margin-top:22px">The house is a data spec in metres, turned into geometry
+      by code. That means the renderer can emit passes that a photograph could never carry: exact depth,
+      view-space normals, a material-ID map with no anti-aliasing, and a line map built from G-buffer
+      discontinuities — an ID change, a relative depth jump, or a normal crease of 35° or more.</p>
+    <p class="body-col">Lines from geometry, not Canny on the beauty: textures, shadows and foliage never
+      produce a false edge. The same passes are used three times over — to control the render, to measure
+      it afterwards, and to decide where type can sit on the finished image.</p>
+  </div>
+  <div class="bleed">
+    <figure>
+      <img src="assets/passes.jpg" alt="Render passes: beauty, depth, normals, lines and material IDs">
+      <figcaption>One camera, five passes, 1216×832, ~1.6 s. Cameras use a vertical lens shift instead of
+        tilting, so verticals stay vertical, the way architectural photography does it.</figcaption>
+    </figure>
+  </div>
+  <div class="wrap">
+    <div class="cards">
+      <div class="card"><h3>Depth as disparity</h3><p>MiDaS convention, with a per-camera range. The first
+        version let the near asphalt eat the whole grey range and the building flattened out.</p></div>
+      <div class="card"><h3>Lines are not enough</h3><p>Driven by a line ControlNet alone, SDXL kept the
+        facade's rhythm and invented a second storey with a balcony: edge recall 0.51–0.63, three of three
+        rejected. A line map is a silhouette plus creases — nothing in it fixes how tall the building is.</p></div>
+      <div class="card"><h3>What fixes volume</h3><p>Depth, or the beauty pass itself as a starting latent
+        or reference image. With beauty at denoise 0.85 plus lines at 0.70: edge recall 0.79–0.88, gate PASS.</p></div>
+    </div>
+    <figure>
+      <img src="assets/i2i-strip.jpg" alt="Strip comparing denoise and ControlNet strength settings">
+      <figcaption>The same camera across denoise and ControlNet strengths. Fidelity and realism pull in
+        opposite directions: the settings with the best geometry are also the ones that read most like CG.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section id="models">
+  <div class="wrap">
+    <p class="eyebrow">Model choice</p>
+    <h2>Four approaches, measured on the same camera.</h2>
+    <p class="body-col" style="margin-top:22px">Two seeds each, same prompt, same control signal where the
+      architecture allowed it. Cold start is the higher number in each pair; warm runs settle at about
+      4 GPU seconds.</p>
+    <table class="tbl">
+      <thead><tr><th>Model</th><th>Approach</th><th class="num">GPU s</th><th class="num">$/image</th><th class="num">Edge recall</th><th>Verdict</th></tr></thead>
+      <tbody>
+        <tr><td>Z-Image Turbo + Fun ControlNet Union</td><td>ControlNet, 8 steps</td><td class="num">3.8–8.9</td><td class="num">0.004–0.009</td><td class="num">0.90–0.92</td><td>Best geometry; colour follows the prompt, not the brand.</td></tr>
+        <tr><td>FLUX.2 klein 9B</td><td>Reference edit, 4 steps</td><td class="num">2.7–14.3</td><td class="num">0.003–0.014</td><td class="num">0.72–0.77</td><td class="pass">Winner — best materials and palette.</td></tr>
+        <tr><td>Qwen-Image + InstantX ControlNet</td><td>ControlNet, 4 steps</td><td class="num">2.4–13.3</td><td class="num">0.002–0.013</td><td class="num">0.63–0.68</td><td>Most ornate, drifts most — invented a door.</td></tr>
+        <tr><td>RealVisXL + ControlNet Union</td><td>Local parity run</td><td class="num">63 s local</td><td class="num">0.0001</td><td class="num">0.79–0.88</td><td>The free draft tier; flatter light.</td></tr>
+      </tbody>
+    </table>
+    <figure>
+      <img src="assets/bakeoff.jpg" alt="Model bake-off contact sheet for the street camera">
+      <figcaption>The bake-off sheet. The cloud parity run of RealVisXL failed validation — the catalogue
+        listed a ControlNet the executor did not have — and no GPU time was billed for it.</figcaption>
+    </figure>
+    <div class="two" style="margin-top:42px">
+      <div>
+        <h3>Edit models beat ControlNet for brand colour</h3>
+        <p class="muted" style="font-size:16px">Given the beauty pass as a reference, FLUX.2 klein carries
+          the palette (ΔE 2.2–6.8). ControlNet models follow the text prompt instead and drift to whatever
+          "warm plaster" means to them (ΔE 15–22). Adding the inverted line drawing as a <em>second</em>
+          reference raised geometry from 0.75 to 0.77.</p>
+      </div>
+      <div>
+        <h3>6 GB of VRAM is a step-count problem</h3>
+        <p class="muted" style="font-size:16px">Not a ControlNet problem. Dropping from 30 to 20 steps took
+          a local render from 213 s to 128 s; dropping the second ControlNet saved ~20 % at 30 steps and
+          nothing at 20. The SDXL-Lightning LoRA — 8 steps, CFG 1, so no unconditional pass — took it to
+          63 s. Same gate verdicts, 3.4× faster.</p>
+        <svg class="chart" viewBox="0 0 560 190" role="img" aria-label="Local render time by step count: 30 steps 213 seconds, 20 steps 128 seconds, Lightning 8 steps 63 seconds">
+          <line class="grid" x1="150" y1="14" x2="150" y2="168"/>
+          <text class="lbl" x="0" y="42">30 steps</text>
+          <rect class="bar" x="150" y="26" width="380" height="24"/>
+          <text class="val" x="524" y="43" text-anchor="end" fill="var(--paper)">213 s</text>
+          <text class="lbl" x="0" y="98">20 steps</text>
+          <rect class="bar" x="150" y="82" width="228" height="24"/>
+          <text class="val" x="372" y="99" text-anchor="end" fill="var(--paper)">128 s</text>
+          <text class="lbl" x="0" y="154">Lightning · 8</text>
+          <rect class="bar hi" x="150" y="138" width="112" height="24"/>
+          <text class="val" x="256" y="155" text-anchor="end" fill="var(--paper)">63 s</text>
+          <text class="ax" x="150" y="182">seconds per image · RTX laptop GPU, 6 GB</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="gate">
+  <div class="wrap">
+    <p class="eyebrow">The quality gate</p>
+    <h2>An image that adds a balcony has to fail automatically.</h2>
+    <p class="body-col" style="margin-top:22px">Every render is measured against the geometry it came
+      from, before anything else happens to it. Four metrics, each answering a different question, each
+      with a threshold in <span class="mono">config/qa.json</span> so the gate is configuration, not code.</p>
+    <table class="tbl">
+      <thead><tr><th style="width:26%">Metric</th><th style="width:22%">Question</th><th>What we learned</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Edge recall</strong> vs the 3D line map (±2 px, inside the house mask)</td><td>Is this the same building?</td>
+          <td>Works. Catches drift and invented openings. There is a ceiling: the beauty pass itself only scores 0.78 against its own lines, so the threshold lives at 0.70.</td></tr>
+        <tr><td><strong>ΔE</strong> (CIE76, Lab) after gray-world white balance</td><td>Is this the brand's palette?</td>
+          <td>Works with caveats. Needs a coverage floor — on the aerial the facade is 0.37 % of the frame — and a looser threshold at dusk, where illuminants are mixed. Fails when one hue dominates.</td></tr>
+        <tr><td><strong>NIQE</strong> (pyiqa)</td><td>Does this read like a photograph?</td>
+          <td>The best photo-vs-CG separator we found: beauty 9.8, local img2img 3.5–5.8, cloud edit ~2.9, text-to-image ~2.</td></tr>
+        <tr><td><strong>CLIP</strong> zero-shot photo vs render</td><td>Same, cheaply</td>
+          <td>Saturated — 0.97–0.99 for nearly everything. Kept as a coarse filter, not as a discriminator.</td></tr>
+        <tr><td><strong>LAION aesthetic</strong></td><td>Is it nice?</td>
+          <td>Barely moves on architecture (4.8–5.8). Logged, never gated.</td></tr>
+      </tbody>
+    </table>
+    <svg class="chart" viewBox="0 0 560 210" style="max-width:560px;margin-top:34px" role="img" aria-label="NIQE by tier: 3D beauty 9.8, local img2img 3.5 to 5.8, cloud edit model 2.9, text to image 2.0">
+      <text class="ax" x="0" y="12">NIQE — lower reads more like a photograph</text>
+      <line class="grid" x1="150" y1="24" x2="150" y2="178"/>
+      <text class="lbl" x="0" y="50">3D beauty</text>
+      <rect class="bar" x="150" y="34" width="380" height="22"/><text class="val" x="524" y="50" text-anchor="end" fill="var(--paper)">9.8</text>
+      <text class="lbl" x="0" y="92">Local img2img</text>
+      <rect class="bar" x="150" y="76" width="225" height="22"/><text class="val" x="369" y="92" text-anchor="end" fill="var(--paper)">3.5–5.8</text>
+      <text class="lbl" x="0" y="134">Cloud edit</text>
+      <rect class="bar hi" x="150" y="118" width="112" height="22"/><text class="val" x="256" y="134" text-anchor="end" fill="var(--paper)">2.9</text>
+      <text class="lbl" x="0" y="176">Text-to-image</text>
+      <rect class="bar" x="150" y="160" width="78" height="22"/><text class="val" x="222" y="176" text-anchor="end" fill="var(--paper)">2.0</text>
+      <text class="ax" x="150" y="200">text-to-image scores best and is the least faithful — realism is not fidelity</text>
+    </svg>
+    <div class="two" style="margin-top:46px">
+      <div>
+        <h3>What the gate taught us</h3>
+        <ul class="ticks">
+          <li><strong>Fidelity and realism pull apart.</strong> The settings with the best geometry read most like CG. One metric cannot arbitrate that; two, with different thresholds, can.</li>
+          <li><strong>Retrying the same failure twice is a prompt bug.</strong> The "restored" style said <em>cream and ochre plaster</em>, contradicting the brand palette. Seeds were burning credits on a text problem.</li>
+          <li><strong>A metric needs a coverage floor.</strong> Colour measured over 0.37 % of a frame is noise with a number attached.</li>
+          <li><strong>6 of 18 verdicts passed</strong> across all attempts; two more were approved by a human in the review queue.</li>
+        </ul>
+      </div>
+      <figure style="margin-top:0">
+        <img src="assets/retry-review.jpg" alt="Retry and review sheet showing rejected and approved attempts">
+        <figcaption>The review queue: what the gate rejected, what it accepted, and the two borderline
+          images a human approved anyway — with the reason recorded next to them.</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<section id="copy">
+  <div class="wrap">
+    <p class="eyebrow">Copy</p>
+    <h2>The validator earned its place twice.</h2>
+    <div class="two" style="margin-top:26px">
+      <div class="body-col">
+        <p>Copy is written by Claude Haiku 4.5 through ComfyUI's partner node. The system prompt is built
+          by a node from the brand voice and a <strong>fact whitelist</strong>: <em>you may use these
+          numbers and nothing else; if a fact is not in this list, it does not exist.</em> Each slot
+          carries a character limit, because a headline is a layout constraint, not a suggestion.</p>
+        <p><strong>Run 1, three languages, 1.34 credits — rejected in all three.</strong> Not the model's
+          fault: the prompt showed the JSON <em>schema</em> as though it were the object to return, so the
+          model answered with the schema. The validator caught it as "expected a string, got dict", plus
+          every character limit. The fix was a literal example object and a separate list of limits.</p>
+        <p><strong>Run 2: EN and PT passed; ES failed by 8 characters.</strong> One repair call — the
+          rejected JSON plus the list of issues, 0.45 credits — came back at 88 characters. Three
+          languages, one repair: <strong>1.79 credits ≈ $0.0085</strong>.</p>
+      </div>
+      <div>
+        <h3>Why it matters</h3>
+        <ul class="ticks">
+          <li>It caught a prompt bug that looked exactly like a model bug.</li>
+          <li>It turns "make it shorter" into a machine-checkable contract.</li>
+          <li>A repair call is far cheaper than regenerating, and keeps what was already approved.</li>
+          <li>The banned-phrase list kills real-estate clichés before a human has to.</li>
+        </ul>
+        <div class="disclaimer" style="margin-top:26px">
+          <p style="margin:0 0 .5em"><strong>Sample output (ES, after repair)</strong></p>
+          <p style="margin:0;font-size:15px" class="muted">claim — <em>la casa respira con la calle</em><br>
+            headline — <em>fachada original, 1890</em><br>
+            caption — <em>Postigos verdes y puerta tallada. La casa chorizo mira hacia Villa Crespo desde su reja.</em><br>
+            cta — <em>conocé la casa</em></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="design">
+  <div class="wrap">
+    <p class="eyebrow">Design system</p>
+    <h2>A generated image is not an asset until it is laid out.</h2>
+    <p class="body-col" style="margin-top:22px">The first version of the composer put type on a picture
+      and called it a post. It was rejected, correctly: anyone could do that in two minutes. What replaced
+      it is a design system in code — a 12-column grid, a 9 px baseline, a type scale with its own tracking
+      and leading, platform-UI safe zones for stories, and a brand mark drawn from code rather than a file.</p>
+    <p class="body-col">And because it is code, it can be checked. Every text block is measured for WCAG
+      contrast against the pixels actually behind it, for minimum type size, and — the one that caught the
+      real bug — for collisions with other blocks.</p>
+  </div>
+  <div class="bleed">
+    <figure>
+      <img src="assets/post-carousel.jpg" alt="The post carousel: cover, shots, data slide and end card">
+      <figcaption>One post package: cover, three shots, a data slide and an end card, in three languages,
+        laid out in 4.0 seconds at zero marginal cost.</figcaption>
+    </figure>
+  </div>
+  <div class="wrap">
+    <div class="three" style="margin-top:34px">
+      <figure style="margin:0"><img src="assets/asset-cover.jpg" alt="Feed cover asset"></figure>
+      <figure style="margin:0"><img src="assets/asset-data.jpg" alt="Data slide asset"></figure>
+      <figure style="margin:0"><img src="assets/asset-story.jpg" alt="Story format asset"></figure>
+    </div>
+    <div class="cards" style="margin-top:40px">
+      <div class="card"><h3>Contrast, twice</h3><p>Two failures caught: a caption over a bright aerial, and
+        a terracotta CTA on ink. The palette now carries a separate accent for dark backgrounds.</p></div>
+      <div class="card"><h3>Collision</h3><p>The price sat on top of the AI disclosure on the link card.
+        Contrast and safe zones both passed. Only an overlap rule sees that.</p></div>
+      <div class="card"><h3>The QA only sees what you route through it</h3><p>The wordmark was drawn
+        straight to the canvas, so nothing checked it — and it shipped at contrast 2.4 over a bright sky.
+        It now rides on an ink chip and goes through the same checker as everything else.</p></div>
+      <div class="card"><h3>Disclosure is stamped, not written</h3><p>"Image generated with AI from the
+        project's 3D model", in the asset's language, placed by the layout engine. Not left to whoever
+        writes the caption.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="cost">
+  <div class="wrap">
+    <p class="eyebrow">Cost model</p>
+    <h2>Every piece carries its own line.</h2>
+    <p class="body-col" style="margin-top:22px">Each stage appends to <span class="mono">out/runs.jsonl</span>:
+      seconds, cache hit or miss, tokens, credits, dollars. The cost table is generated from that file —
+      nothing is estimated after the fact.</p>
+    <table class="tbl">
+      <thead><tr><th>Stage</th><th>Backend</th><th class="num">Runs</th><th class="num">Cache hits</th><th class="num">Time</th><th class="num">Energy</th><th class="num">$</th></tr></thead>
+      <tbody>
+        <tr><td>Export passes</td><td>local</td><td class="num">9</td><td class="num">3</td><td class="num">10 s</td><td class="num">—</td><td class="num">0.0000</td></tr>
+        <tr><td>Render</td><td>Comfy Cloud</td><td class="num">29</td><td class="num">0</td><td class="num">147.0 GPU s</td><td class="num">—</td><td class="num">0.1425</td></tr>
+        <tr><td>Render</td><td>local ComfyUI</td><td class="num">13</td><td class="num">1</td><td class="num">1552 s</td><td class="num">15.4 Wh</td><td class="num">0.0015</td></tr>
+        <tr><td>Upscale</td><td>local ComfyUI</td><td class="num">6</td><td class="num">0</td><td class="num">543 s</td><td class="num">7.5 Wh</td><td class="num">0.0008</td></tr>
+        <tr><td>Library crops</td><td>local</td><td class="num">8</td><td class="num">0</td><td class="num">2 s</td><td class="num">—</td><td class="num">0.0000</td></tr>
+        <tr><td colspan="6"><strong>Total</strong> — 7 approved pieces → 28 deliverable files</td><td class="num"><strong>0.1450</strong></td></tr>
+      </tbody>
+    </table>
+    <div class="two" style="margin-top:38px">
+      <div><h3>Local or cloud</h3><p class="muted" style="font-size:16px">63 seconds of a 6 GB laptop GPU
+        against about 4 seconds of a 96 GB cloud GPU, on the same work. Local stays useful as the free
+        draft tier and for upscaling; the cloud is for the final pass. Comfy Cloud bills the RTX 6000 Pro
+        at $3.49/h = 736.39 credits/h, so a warm render is 0.86 credits ≈ $0.004.</p></div>
+      <div><h3>The cache is part of the cost model</h3><p class="muted" style="font-size:16px">Passes are
+        content-addressed on the scene spec, the camera, the lighting and the scene source code. Change a
+        prompt and nothing re-renders; move a window by 10 cm and exactly the affected cameras do. A re-run
+        of the exporter is three cache hits in about zero milliseconds.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="plug">
+  <div class="wrap">
+    <p class="eyebrow">Plug &amp; play</p>
+    <h2>What it takes for someone else to run this.</h2>
+    <p class="body-col" style="margin-top:22px">The pipeline is a ComfyUI node pack plus a repo. Below is
+      the path a new user follows today, and — honestly separated — what is still missing for it to be a
+      one-click install from the ComfyUI Manager.</p>
+
+    <h3 style="margin-top:44px">Today: install and run</h3>
+    <ol class="steps">
+      <li>
+        <h3>Clone the repo and its node pack</h3>
+        <p>The pack is a thin wrapper: a loader in <span class="mono">custom_nodes</span> that points
+          ComfyUI at the repo's <span class="mono">comfy_nodes</span> folder, so one checkout serves both
+          the graph and the command line.</p>
+<pre><code>git clone https://github.com/&lt;user&gt;/casa-accelerator
+cd casa-accelerator &amp;&amp; npm install        # Three.js scene + headless exporter
+python -m venv .venv &amp;&amp; .venv/Scripts/pip install -r requirements.txt</code></pre>
+<pre><code># ComfyUI/custom_nodes/casa-accelerator/__init__.py
+import sys; sys.path.insert(0, r"&lt;path-to&gt;/casa-accelerator/comfy_nodes")
+from casa_accelerator import NODE_CLASS_MAPPINGS, NODE_DISPLAY_NAME_MAPPINGS</code></pre>
+      </li>
+      <li>
+        <h3>Install the metric dependencies into ComfyUI's Python</h3>
+        <p>The gate needs <span class="mono">open_clip_torch</span> and <span class="mono">pyiqa</span>.
+          Install them with <span class="mono">--no-deps</span>: both want to pull their own torch build,
+          which will happily replace the CUDA build ComfyUI is running on.</p>
+<pre><code>&lt;ComfyUI-python&gt; -m pip install --no-deps open_clip_torch pyiqa</code></pre>
+      </li>
+      <li>
+        <h3>Download the models</h3>
+        <p>All of them are commercial-use licences — see the rights table below. Nothing in the pack
+          downloads models for you, on purpose: model provenance is something the user should choose.</p>
+        <table class="tbl" style="margin-top:12px">
+          <thead><tr><th>File</th><th>Folder</th><th>Licence</th></tr></thead>
+          <tbody>
+            <tr><td>RealVisXL V5.0 fp16</td><td class="mono">models/checkpoints</td><td>openrail++</td></tr>
+            <tr><td>SDXL-Lightning 8-step LoRA</td><td class="mono">models/loras</td><td>openrail++</td></tr>
+            <tr><td>ControlNet Union SDXL Promax (xinsir)</td><td class="mono">models/controlnet</td><td>Apache 2.0</td></tr>
+            <tr><td>RealESRGAN x4plus</td><td class="mono">models/upscale_models</td><td>BSD-3</td></tr>
+          </tbody>
+        </table>
+      </li>
+      <li>
+        <h3>Point the scene at your building</h3>
+        <p>Everything the pipeline knows about the project is configuration, not code:</p>
+        <ul class="ticks" style="margin-top:10px">
+          <li><span class="mono">scene/house.json</span> — the building, in metres, plus its cameras</li>
+          <li><span class="mono">config/brand.json</span> — palette, typeface, voice, formats, AI disclosure per language</li>
+          <li><span class="mono">config/copy.json</span> — the fact whitelist: the only numbers the LLM is allowed to use</li>
+          <li><span class="mono">config/styles.json</span> — subjects and styles per camera</li>
+          <li><span class="mono">config/qa.json</span> — every gate threshold, with per-style overrides</li>
+        </ul>
+      </li>
+      <li>
+        <h3>Open the graph and press Run</h3>
+        <p>Load <span class="mono">workflows/ui/casa-master.json</span> from the ComfyUI sidebar. The run
+          renders the 3D passes, generates, gates, upscales, writes and validates the copy, lays out the
+          asset and appends a line to the run log. For batches, the same graph is driven headlessly:</p>
+<pre><code>python pipeline/render.py --camera street --style restored --gate 3
+python pipeline/post.py --post casa-larga-1408 --langs es en pt
+python pipeline/cost_table.py                  # regenerates docs/costs.md</code></pre>
+      </li>
+      <li>
+        <h3>If you want the LLM copy node</h3>
+        <p>ComfyUI's partner nodes bill against a Comfy credit balance, separate from a Cloud plan, and
+          the auth token is attached by the frontend — so a prompt queued straight against the HTTP API
+          comes back <em>Unauthorized</em> even when you are signed in. Run those from the app window, or
+          swap the node for any other LLM node: the prompt builder and the validator do not care which
+          model answers, as long as it returns the JSON object.</p>
+      </li>
+    </ol>
+
+    <h3 style="margin-top:54px">To make it properly plug-and-play</h3>
+    <p class="body-col">What is in place, and what is not, for publishing to the ComfyUI Registry so the
+      pack installs from the Manager by name:</p>
+    <table class="tbl">
+      <thead><tr><th style="width:34%">Piece</th><th style="width:14%">State</th><th>What is needed</th></tr></thead>
+      <tbody>
+        <tr><td>Node pack, stable node IDs and display names</td><td class="pass">done</td><td>Seven nodes under one category, thin wrappers over the shared modules.</td></tr>
+        <tr><td>Example workflows in the repo</td><td class="pass">done</td><td>API and UI formats, both committed, both current with the nodes.</td></tr>
+        <tr><td>Run log and cost table</td><td class="pass">done</td><td>Generated from the log, not written by hand.</td></tr>
+        <tr><td><span class="mono">pyproject.toml</span> with Comfy Registry metadata</td><td>missing</td><td>Publisher ID, semantic version, repository URL, node list — then <span class="mono">comfy node publish</span>.</td></tr>
+        <tr><td>Dependency manifest for the pack</td><td>missing</td><td>Its own <span class="mono">requirements.txt</span> without torch, plus a guard that fails with a readable message when a metric library is absent instead of at import time.</td></tr>
+        <tr><td>Node-level tests in CI</td><td>missing</td><td>Load the pack headless, run the graph on a fixture scene, assert the gate's numbers against stored values.</td></tr>
+        <tr><td>Model bootstrap</td><td>missing</td><td>A script that fetches the four models with checksums, or Manager model-list entries.</td></tr>
+        <tr><td>Node.js dependency</td><td>partly</td><td><span class="mono">CasaRender3D</span> shells out to a Playwright exporter that needs Node and a Chromium-family browser. Packaging a pre-baked GLB path would remove that for users who bring their own 3D file.</td></tr>
+        <tr><td>Windows-only paths</td><td>partly</td><td>Paths are resolved from the repo root, but only Windows has been exercised; the exporter's browser channel is hard-coded to system Edge.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section id="rights">
+  <div class="wrap">
+    <p class="eyebrow">Rights &amp; risks</p>
+    <h2>The legal risk in real estate is not copyright. It is misrepresentation.</h2>
+    <div class="two" style="margin-top:26px">
+      <div class="body-col">
+        <p>An AI image that adds a balcony to a listing is a problem for the developer long before it is a
+          problem for a designer. That is why the geometry check is the first gate and not the last, and why
+          borderline images go to a review queue with the reason recorded next to them.</p>
+        <p>Model licences were chosen for commercial use: RealVisXL V5 (openrail++), xinsir ControlNet Union
+          (Apache 2.0), Real-ESRGAN (BSD-3), Z-Image Turbo and its Fun ControlNet (Apache 2.0), FLUX.2 klein
+          (Apache 2.0). Two popular options were deliberately excluded: 4x-UltraSharp (CC BY-NC-SA) and
+          FLUX.1-dev (non-commercial).</p>
+      </div>
+      <div class="body-col">
+        <p>The typeface is Switzer under the Fontshare licence, commercial use allowed. The brand mark is
+          drawn from code; the visual language is generic modernist; no existing studio's identity is reused.
+          The developer and the project are invented.</p>
+        <p>Copy is constrained by the fact whitelist, and the validator rejects any number that is not in the
+          project's data. Every published asset carries its AI disclosure, stamped by the layout engine in the
+          asset's own language.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="next">
+  <div class="wrap">
+    <p class="eyebrow">Limitations</p>
+    <h2>What this does not do yet.</h2>
+    <ul class="ticks" style="max-width:74ch">
+      <li>Gate thresholds are calibrated by eye on about 30 images. They need a VLM judge or human labels to be defensible at scale.</li>
+      <li>The aerial camera is the weakest case: the facade is 0.37 % of the frame, so colour QA there is unreliable and currently skipped by a coverage floor.</li>
+      <li>Custom nodes run on local ComfyUI. Comfy Cloud executes its own catalogue, so cloud runs use stock nodes and the gate runs afterwards, locally.</li>
+      <li>The local tier's light is flatter than the cloud edit model's (NIQE 4.2–4.4 against ~2.9). Good enough for drafts, not for the hero image.</li>
+      <li>Video is untested. The next experiment is a reels clip from the same passes, with the same gate applied per frame.</li>
+    </ul>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="two">
+      <div>
+        <p style="color:var(--ink);font-weight:600;margin-bottom:6px">Casa Accelerator</p>
+        <p style="margin:0">Personal R&amp;D. The developer, the project and its figures are fictional.
+          Images are generated with AI from the project's own 3D model.</p>
+      </div>
+      <div>
+        <p style="margin:0">Three.js · Playwright · ComfyUI · RealVisXL V5 · SDXL-Lightning · ControlNet Union ·
+          FLUX.2 klein · Z-Image Turbo · Qwen-Image · Real-ESRGAN · OpenCLIP · pyiqa · Claude Haiku 4.5 ·
+          Pillow · Switzer</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

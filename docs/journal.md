@@ -253,3 +253,25 @@ in the frontend and returns nothing in a headless run) and `scripts/export-glb.m
 (`out/model/casa-chorizo.glb`, 2.19 MB, the same procedural house as a file).
 
 `CasaRender3D` needs a ComfyUI restart to load.
+
+## Stage 12 — the case-study page (2026-09-20)
+
+`docs/report/index.html`: the whole project as a Monks-style case study — problem, pipeline, control
+signals, model bake-off, quality gate, copy validator, design system, cost model, rights, and a
+plug-and-play section with the step-by-step for someone else to install and run this, plus an honest
+table of what is still missing to publish the node pack to the ComfyUI Registry.
+
+Self-contained: brand palette and Switzer, no external requests, inline SVG charts drawn from the
+measured numbers. `scripts/report_assets.py` rebuilds its figures from wherever the pipeline wrote
+them (4.5 MB of web-sized images), so the page refreshes after new runs instead of drifting.
+
+Two things fixed while assembling it:
+- The wordmark on cover and story was drawn straight to the canvas, so the design QA never saw it —
+  and it shipped at contrast 2.4 over a bright sky. It now rides on an ink chip (`Canvas.plate`) and
+  goes through `qa_text` like every other block. Lesson: **QA only sees what you route through it.**
+- The master graph now starts from `CasaRender3D` instead of two `LoadImage` nodes.
+
+Credits, for the record: the Comfy plan's monthly pool is barely touched (41 of 7,400 used). What is
+empty is the *additional* pay-as-you-go balance, and that is what partner API nodes draw from when
+ComfyUI runs locally — hence "Payment Required" on the copy node while cloud runs of the same model
+went through fine.
