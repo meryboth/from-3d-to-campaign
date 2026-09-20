@@ -118,3 +118,25 @@ Cold start is the higher number in each pair; warm runs settle at ~4 GPU s.
   crops need either the exporter or a depth estimator node.
 - Custom nodes run on local ComfyUI; Comfy Cloud executes its own catalogue only.
 - Aerial camera is the weakest: the facade is 0.37 % of the frame, so colour QA is unreliable there.
+
+## 10. Running the whole thing as one graph (2026-09-20)
+
+The node pack loads in ComfyUI (6 nodes under "casa accelerator") and the image half of the master
+graph runs end to end locally: **50.9 s**, sampler 33 s, VRAM peak 5,850 MB of 6,144.
+
+**Finding: lines alone are not enough control.** `Load3D` returns image, mask and normals but no
+depth, so the first graph drove SDXL with a line ControlNet only. At strengths 0.6 / 0.9 / 1.0 the
+model kept the facade's rhythm but **invented a second storey with a balcony** — edge recall 0.51–0.63,
+all three rejected by the gate. What holds the storey count is depth (in the CLI pipeline) or the
+beauty as a reference image (FLUX.2 klein in the cloud).
+
+**Fix inside the graph:** use the beauty as the starting latent (VAEEncode → KSampler denoise 0.85)
+with the line ControlNet at 0.7. Result: **edge recall 0.79–0.83, ΔE 1.9–2.4, gate PASS**, ~54 s.
+The trade-off is the local tier's flatter light (NIQE 4.2–4.4 vs ~2.9 for the cloud edit model).
+
+Reading for the report: the control signal has to constrain *volume*, not just edges. A line map is
+a silhouette plus creases; without depth or an image reference, a generative model is free to read
+the same lines as a taller building.
+
+Costing the copy node: Claude Haiku 4.5 through the partner node is priced ~0–1 credit per 1K tokens;
+our prompt is ~700 tokens in and ~300 out, so ≈1 credit (~$0.005) per language.
