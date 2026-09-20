@@ -12,7 +12,8 @@
     "paper": "#EFECE3",
     "ink": "#12100E",
     "accent": "#C8511E",
-    "muted": "#8A857A"
+    "muted": "#8A857A",
+    "accent_on_dark": "#F0764A"
   },
   "typography": {
     "family": "Switzer",
@@ -27,9 +28,9 @@
     }
   },
   "mark": {
-    "concept": "2x2 grid: two solid squares and two quarter-discs in a pinwheel. Order = the grid and the squares; form = the curves. Drawn from code in pipeline/brand_mark.py, no external asset.",
-    "clearspace": "one module on every side",
-    "min_size_px": 48
+    "concept": "Option A: a square with two opposite corners cut by quarter discs - order is the square, form is the curve. Drawn from code in pipeline/brand_mark.py, no external asset, no resemblance to any existing logo.",
+    "clearspace": "half the mark's width on every side",
+    "min_size_px": 44
   },
   "voice": {
     "do": [

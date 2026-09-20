@@ -1,0 +1,33 @@
+{
+  "_note": "A post is a sequence, not an image. Each entry becomes a carousel (4:5), a story and a link/banner, in every language.",
+  "posts": [
+    {
+      "id": "casa-larga-1408",
+      "claim": {
+        "es": "la casa que ya sabía cómo vivirse",
+        "en": "the house that already knew how to be lived in",
+        "pt": "a casa que já sabia como ser vivida"
+      },
+      "cover": "street_restored",
+      "shots": ["patio_dusk", "aerial_restored"],
+      "shot_captions": {
+        "patio_dusk": {
+          "es": "El patio es el living: doce metros de galería y cielo abierto en el medio de la casa.",
+          "en": "The patio is the living room: twelve metres of gallery and open sky in the middle of the house.",
+          "pt": "O pátio é a sala: doze metros de galeria e céu aberto no meio da casa."
+        },
+        "aerial_restored": {
+          "es": "Larga y angosta como el lote: cuartos en fila, dos patios, fondo con frutales.",
+          "en": "Long and narrow like the lot: rooms in a row, two patios, a back garden.",
+          "pt": "Longa e estreita como o lote: quartos em fila, dois pátios, quintal com frutíferas."
+        }
+      },
+      "caption": {
+        "es": "Villa Crespo, 1890. Una casa chorizo de 8,66 × 50 m que restauramos tal como era: cuartos en fila, dos patios y la galería que los une.\n\nTres ambientes · 182 m² cubiertos · desde USD 265.000\n\nImágenes generadas con IA a partir del modelo 3D del proyecto.",
+        "en": "Villa Crespo, 1890. A casa chorizo on an 8.66 × 50 m lot, restored as it was: rooms in a row, two patios and the gallery that ties them together.\n\nThree rooms · 182 m² covered · from USD 265,000\n\nImages generated with AI from the project's 3D model.",
+        "pt": "Villa Crespo, 1890. Uma casa chorizo de 8,66 × 50 m restaurada como era: quartos em fila, dois pátios e a galeria que os une.\n\nTrês ambientes · 182 m² cobertos · a partir de USD 265.000\n\nImagens geradas com IA a partir do modelo 3D do projeto."
+      },
+      "hashtags": ["#casachorizo", "#villacrespo", "#patrimonio", "#arquitecturaargentina", "#restauracion"]
+    }
+  ]
+}

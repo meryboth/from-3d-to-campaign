@@ -1,0 +1,127 @@
+{
+  "_note": "Design system for the social pipeline. Sizes are for a 1080 px wide canvas and scale linearly with width.",
+  "grid": {
+    "cols": 12,
+    "margin": 72,
+    "gutter": 24,
+    "baseline": 9
+  },
+  "type": {
+    "display": {
+      "size": 104,
+      "leading": 0.94,
+      "tracking": -0.032,
+      "weight": "bold",
+      "case": "lower"
+    },
+    "headline": {
+      "size": 66,
+      "leading": 1.0,
+      "tracking": -0.024,
+      "weight": "bold",
+      "case": "lower"
+    },
+    "body": {
+      "size": 32,
+      "leading": 1.34,
+      "tracking": -0.004,
+      "weight": "regular",
+      "case": "none"
+    },
+    "meta": {
+      "size": 19,
+      "leading": 1.2,
+      "tracking": 0.14,
+      "weight": "medium",
+      "case": "upper"
+    },
+    "number": {
+      "size": 148,
+      "leading": 0.9,
+      "tracking": -0.04,
+      "weight": "bold",
+      "case": "none"
+    },
+    "caption": {
+      "size": 17,
+      "leading": 1.25,
+      "tracking": 0.06,
+      "weight": "regular",
+      "case": "none"
+    },
+    "subhead": {
+      "size": 46,
+      "leading": 1.06,
+      "tracking": -0.02,
+      "weight": "bold",
+      "case": "lower"
+    }
+  },
+  "formats": {
+    "feed": {
+      "w": 1080,
+      "h": 1350,
+      "safe": [
+        72,
+        72,
+        72,
+        72
+      ],
+      "note": "4:5, the format IG gives the most screen to"
+    },
+    "story": {
+      "w": 1080,
+      "h": 1920,
+      "safe": [
+        72,
+        260,
+        72,
+        340
+      ],
+      "note": "top/bottom reserved for platform UI"
+    },
+    "banner": {
+      "w": 1920,
+      "h": 1080,
+      "safe": [
+        80,
+        80,
+        80,
+        80
+      ]
+    },
+    "link": {
+      "w": 1200,
+      "h": 630,
+      "safe": [
+        56,
+        56,
+        56,
+        56
+      ],
+      "note": "og:image / link preview"
+    }
+  },
+  "post": {
+    "carousel": [
+      "cover",
+      "shot",
+      "shot",
+      "data",
+      "end"
+    ],
+    "note": "one post = a sequence: cover with the claim, two full-bleed shots with captions, a data card, a closing card"
+  },
+  "devices": {
+    "hairline": 2,
+    "rule_gap": 18,
+    "index_format": "{n:02d}",
+    "caption_prefix": "—"
+  },
+  "qa": {
+    "min_contrast_ratio": 4.5,
+    "min_type_px": 17,
+    "max_text_detail": 0.16,
+    "_note": "contrast = WCAG 2.1 on the sampled background; max_text_detail = share of edge pixels allowed under a type block, so copy never sits on a busy area"
+  }
+}

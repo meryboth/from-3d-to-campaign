@@ -190,3 +190,23 @@ Two rules are enforced in the layout itself, not left to whoever writes the capt
 2. **The facts come from `config/copy.json`**, one source for m², rooms, patios and price, so no piece can contradict another.
 
 Hypothetical project data (Casa Larga 1408, Villa Crespo, 182 m², USD 265,000) is flagged as invented in the config and in the report.
+
+## Stage 9: a design system, not an overlay
+
+First version of the composer was a band with text on it — creative direction called it what it was: something anyone could do in Paint. Rebuilt as a design system.
+
+**`config/design.json`** holds the tokens: a 12-column grid with a 9 px baseline, a type scale (display / headline / subhead / body / meta / number / caption) with real tracking and leading, the graphic devices (hairlines, index numbers, metadata rails) and the publishing formats. Sizes are authored for 1080 px and scale with canvas width.
+
+**`pipeline/design.py`** is the canvas PIL doesn't give you: letter-spacing, measured type blocks, grid columns, hairlines, cover-fit images, gradient scrims — and image-aware placement that reads the render passes (the ID map knows where the sky is, the lines map knows where the detail is), so copy can be put on the calm part of a photo by data instead of by eye.
+
+**`pipeline/post.py`** builds a *post*, not an image: a 4:5 carousel (cover → two shots with captions → data card → closing card), a story and a link/og image, in every language, plus the caption file and a `manifest.json` with the provenance of every render (which approved file it came from) ready for a scheduler.
+
+**Design QA runs on every slide** and is part of the gate philosophy:
+- WCAG contrast of each type block against what is actually behind it
+- minimum type size
+- safe zones per platform
+- **no type block may overlap another** — this one caught a collision between the price and the AI disclosure on the link image that the contrast check could not see
+
+Sequence: first run flagged 2 contrast issues (a caption over a bright aerial, the CTA in brand terracotta on the dark card). Fixes: stronger scrim, and a lighter accent tint reserved for dark backgrounds (`accent_on_dark`). Second run flagged the overlap. Third run: **21 assets (7 × 3 languages) in 4.0 s, QA clean, $0.**
+
+Format note: the feed format is **4:5, not 1:1** — it is the one Instagram gives the most screen to.
