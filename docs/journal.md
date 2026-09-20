@@ -210,3 +210,32 @@ First version of the composer was a band with text on it — creative direction 
 Sequence: first run flagged 2 contrast issues (a caption over a bright aerial, the CTA in brand terracotta on the dark card). Fixes: stronger scrim, and a lighter accent tint reserved for dark backgrounds (`accent_on_dark`). Second run flagged the overlap. Third run: **21 assets (7 × 3 languages) in 4.0 s, QA clean, $0.**
 
 Format note: the feed format is **4:5, not 1:1** — it is the one Instagram gives the most screen to.
+
+## Stage 10: the pipeline becomes a ComfyUI graph
+
+Creative direction's note was that the process was half scripts, half ComfyUI, with me in the middle.
+Fixed by packaging the logic as a node pack, `comfy_nodes/casa_accelerator`, loaded into ComfyUI
+through a stub in `custom_nodes` that points back at the repo (edit the repo, restart ComfyUI).
+
+| Node | Wraps |
+|---|---|
+| Casa · passes from 3D | line map from normal discontinuities + silhouette (works on `Load3D`'s normal output) |
+| Casa · quality gate | geometry, brand ΔE, CLIP photo-vs-CG, NIQE → `passed` + report + metrics |
+| Casa · copy prompt | system + user prompt built from brand, voice and the project fact whitelist |
+| Casa · copy check | parses the LLM JSON, enforces character limits, banned phrases, invented numbers |
+| Casa · layout | the design system, with the same collision/contrast QA |
+| Casa · log run | appends seconds, tokens and cost to the shared `runs.jsonl` |
+
+`Load3D` (core, ships with ComfyUI) accepts GLB/GLTF/FBX/OBJ/STL/USDZ and returns image, mask and
+normals — so the "3D model → passes" stage can live inside the graph, which also answers the CAD
+question from earlier.
+
+Environment note: `open_clip_torch` and `pyiqa` installed into ComfyUI's own python **with
+`--no-deps`**, so its torch 2.10+cu130 build was left untouched; realism scoring runs there on CUDA
+(p_photo 0.973, NIQE 2.91 on a known-good render).
+
+Master graph: `workflows/api/graph_master_local.json`, 24 nodes, passes → ControlNet + Lightning →
+gate → upscale → copy prompt → Claude Haiku 4.5 (partner node, billed in Comfy credits) → copy
+check → layout → save, with the run log at the end.
+
+Report notes live in `docs/report-notes.md` from now on, updated as we go.
