@@ -177,7 +177,7 @@ Everything above runs as **one local ComfyUI graph**, 25 nodes, seven stages:
 
 | Stage | Nodes | What happens |
 |---|---|---|
-| 1 · 3D passes in | `beauty_image`, `normal_image`, `passes` (CasaPasses) | the Three.js passes enter the graph; lines are rebuilt from the normal pass + silhouette |
+| 1 · 3D scene in | `render_3d` (CasaRender3D) | renders the house from `scene/house.json` and hands the graph beauty, depth, normal, **lines** and a house mask; content-hash cached |
 | 2 · Models | `ckpt` (RealVisXL V5), `lora` (SDXL-Lightning 8-step), `controlnet` (xinsir union) + `type_lines`, `upscaler` (Real-ESRGAN) | everything that is loaded once |
 | 3 · Conditioning | `positive`, `negative`, `encode_beauty`, `latent`, `cn_lines` | the beauty pass is VAE-encoded as the starting latent (denoise 0.85) and the lines drive ControlNet at 0.70 |
 | 4 · Sampling | `sampler`, `decode`, `preview_render` | 8 steps, cfg 1.0, euler / sgm_uniform |
