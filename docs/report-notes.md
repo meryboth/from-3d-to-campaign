@@ -140,3 +140,31 @@ the same lines as a taller building.
 
 Costing the copy node: Claude Haiku 4.5 through the partner node is priced ~0–1 credit per 1K tokens;
 our prompt is ~700 tokens in and ~300 out, so ≈1 credit (~$0.005) per language.
+
+## 11. Copy with an LLM, and why the validator matters (2026-09-20)
+
+Copy is written by Claude Haiku 4.5 through ComfyUI's partner node, with a system prompt built by
+`CasaCopySpec` from the brand voice and a **fact whitelist**: "you may use these numbers and nothing
+else; if a fact is not in this list, it does not exist". Slots carry character limits because they
+are layout constraints.
+
+**Run 1 (3 languages, 1.34 credits ≈ $0.006): rejected in all three.** Not the model's fault — the
+prompt showed the JSON *schema* as if it were the object to return, so the model answered with the
+schema and the text inside it. The validator caught it as "expected a string, got dict", plus every
+character limit. Fix: show a literal example object with placeholders, and list the limits separately.
+
+**Run 2: EN and PT passed; ES failed by 8 characters** (caption 98 vs 90). One repair call, feeding
+the rejected JSON and the issue list back to the model (0.45 credits), returned an 88-character
+caption: **COPY OK**.
+
+Total for three languages with one repair: **1.79 credits ≈ $0.0085**.
+
+Lessons for the report:
+- The validator earns its place twice over: it caught a prompt bug that looked like a model bug, and
+  it turns "make it shorter" into a machine-checkable contract.
+- Character limits belong in the prompt *and* in the checker. Models miscount; layouts don't forgive.
+- A repair call is much cheaper than a re-generation and keeps what was already approved.
+
+Sample output (ES, after repair): claim "la casa respira con la calle" · headline "fachada original,
+1890" · caption "Postigos verdes y puerta tallada. La casa chorizo mira hacia Villa Crespo desde su
+reja." · cta "conocé la casa".

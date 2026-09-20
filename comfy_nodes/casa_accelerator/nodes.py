@@ -177,7 +177,7 @@ of the neighbourhood. If a fact is not in this list, it does not exist:
 {facts}
 
 HOW TO WRITE
-- Write in {language_name}. For Spanish use rioplatense (vos), never peninsular.
+- Write in {language_name}. {language_note}
 - This is transcreation, not translation: each language gets its own idiom and rhythm.
 - Short sentences. Concrete nouns. Let the architecture do the selling.
 - Talk about light, proportion, patios, the street, how the house is used.
@@ -185,9 +185,14 @@ HOW TO WRITE
 - Never describe the images as renders or AI; the disclosure is printed separately.
 
 OUTPUT
-Return only a JSON object, no prose around it, with exactly these keys:
-{slots}
-Respect every max_chars limit: they are layout constraints, not suggestions."""
+Return ONE JSON object and nothing else. Every value is a plain string — never an
+object, never a list. Use exactly this shape, replacing the placeholder text:
+
+{example}
+
+Each field, with the limit it must respect (character limits are layout constraints,
+not suggestions — count them):
+{slot_list}"""
 
 
 class CasaCopySpec:
@@ -221,11 +226,17 @@ class CasaCopySpec:
             "lot": p["lot"], "covered area m2": p["area_m2"], "rooms": p["rooms"], "patios": p["patios"],
             "price USD": p["price_usd"], "status": p["status"][language],
         }.items())
+        slot_spec = json.loads(slots)
+        example = json.dumps({k: f"<{k} here>" for k in slot_spec}, indent=1, ensure_ascii=False)
+        slot_list = "\n".join(f'- "{k}": {v["what"]} — max {v["max_chars"]} characters' for k, v in slot_spec.items())
         system = SYSTEM_PROMPT.format(
             positioning=BRAND["positioning"], brand=BRAND["name"],
             voice_do="; ".join(BRAND["voice"]["do"]), voice_dont="; ".join(BRAND["voice"]["dont"]),
             facts=facts, language_name={"es": "Spanish", "en": "English", "pt": "Brazilian Portuguese"}[language],
-            slots=slots)
+            language_note={"es": "Use rioplatense Spanish (vos, not tú), never peninsular.",
+                           "en": "Neutral international English; metric units.",
+                           "pt": "Brazilian Portuguese, not European; metric units."}[language],
+            example=example, slot_list=slot_list)
         user = (f"Piece: {piece}\nWhat the image shows: {scene_note}\n"
                 f"Write the JSON now, in {language}.")
         return (system, user, slots)
@@ -266,7 +277,11 @@ class CasaCopyCheck:
 
         slots = json.loads(slots_json)
         for key, spec in slots.items():
-            v = str(data.get(key, "")).strip()
+            raw_v = data.get(key, "")
+            if isinstance(raw_v, (dict, list)):
+                issues.append(f"{key}: expected a string, got {type(raw_v).__name__} (model echoed the schema)")
+                continue
+            v = str(raw_v).strip()
             if not v:
                 issues.append(f"{key}: missing")
                 continue
