@@ -1,7 +1,7 @@
 [project]
 name = "from-3d-to-campaign"
 description = "Turn a 3D model of a building into social-ready campaign assets: geometry-faithful renders, an automatic quality gate, validated copy and a laid-out post — all in one ComfyUI graph."
-version = "0.1.2"
+version = "0.1.3"
 license = { file = "LICENSE" }
 requires-python = ">=3.10"
 dependencies = ["numpy>=2", "pillow>=11", "websocket-client>=1.8"]
