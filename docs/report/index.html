@@ -532,11 +532,16 @@ footer{border-top:1px solid var(--line);padding:44px 0 70px;font-size:14px;color
   <div class="wrap">
     <p class="eyebrow">Plug &amp; play</p>
     <h2>What it takes for someone else to run this.</h2>
-    <p class="body-col" style="margin-top:22px">The pipeline is a ComfyUI node pack plus a repo. Below is
-      the path a new user follows today, and — honestly separated — what is still missing for it to be a
-      one-click install from the ComfyUI Manager.</p>
+    <p class="body-col" style="margin-top:22px">The pipeline is a ComfyUI node pack plus a repo, and it is
+      <strong>published on the ComfyUI Registry</strong> as
+      <span class="mono">from-3d-to-campaign</span> — so the short version of this section is: search
+      <em>From 3D to Campaign</em> in the ComfyUI Manager and install it. Below is what that took, the
+      manual path, and what is still missing.</p>
+<pre><code># or, without the Manager
+cd ComfyUI/custom_nodes
+git clone https://github.com/meryboth/from-3d-to-campaign</code></pre>
 
-    <h3 style="margin-top:44px">Today: install and run</h3>
+    <h3 style="margin-top:44px">Install and run</h3>
     <ol class="steps">
       <li>
         <h3>Clone the repo and its node pack</h3>
@@ -615,6 +620,7 @@ python pipeline/cost_table.py                  # regenerates docs/costs.md</code
         <tr><td>Root entry point, so a clone into <span class="mono">custom_nodes</span> just works</td><td class="pass">done</td><td>An <span class="mono">__init__.py</span> at the repo root re-exports the pack's mappings — no loader stub to write by hand.</td></tr>
         <tr><td><span class="mono">pyproject.toml</span> with Comfy Registry metadata</td><td class="pass">done</td><td>Name, semantic version, licence, repository, publisher ID and the ComfyUI version floor, plus a <span class="mono">.comfyignore</span> and a GitHub Action that publishes on a version bump.</td></tr>
         <tr><td>Dependency manifest for the pack</td><td class="pass">done</td><td>The root <span class="mono">requirements.txt</span> carries nothing that pulls torch; the metric libraries live in <span class="mono">requirements-dev.txt</span> and the gate degrades to geometry + colour with a readable reason when they are absent.</td></tr>
+        <tr><td>Published on the Registry</td><td class="pass">done</td><td>Publisher <span class="mono">@meryboth</span>, package <span class="mono">from-3d-to-campaign</span>, version 0.1.3. A version bump on <span class="mono">main</span> is the release trigger; the action needs the API key stored as a repository secret, and fails with <span class="mono">Option '--token' requires an argument</span> when it is missing — which is what an empty secret looks like from the outside.</td></tr>
         <tr><td>Node-level tests in CI</td><td>missing</td><td>Load the pack headless, run the graph on a fixture scene, assert the gate's numbers against stored values.</td></tr>
         <tr><td>Model bootstrap</td><td>missing</td><td>A script that fetches the four models with checksums, or Manager model-list entries.</td></tr>
         <tr><td>Node.js dependency</td><td>partly</td><td><span class="mono">CasaRender3D</span> shells out to a Playwright exporter that needs Node and a Chromium-family browser. Packaging a pre-baked GLB path would remove that for users who bring their own 3D file.</td></tr>

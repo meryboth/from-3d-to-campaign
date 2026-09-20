@@ -275,3 +275,19 @@ Credits, for the record: the Comfy plan's monthly pool is barely touched (41 of 
 empty is the *additional* pay-as-you-go balance, and that is what partner API nodes draw from when
 ComfyUI runs locally — hence "Payment Required" on the copy node while cloud runs of the same model
 went through fine.
+
+## Stage 13 — published (2026-09-20)
+
+The project is now **From 3D to Campaign**, and the node pack is on the ComfyUI Registry as
+`from-3d-to-campaign` under `@meryboth` (v0.1.3). Packaging that made it installable: a root
+`__init__.py` so a clone into `custom_nodes` loads the pack with no hand-written stub, a
+`pyproject.toml` with the registry metadata, a `.comfyignore`, and a GitHub Action triggered by a
+version bump on `main`.
+
+Two things cost a release each:
+- `Option '--token' requires an argument` — the action's way of saying the `REGISTRY_ACCESS_TOKEN`
+  secret is empty or misnamed. The step fails before it reaches the registry, so it looks like a
+  packaging error and is not one.
+- The requirements had to be split: anything next to ComfyUI must not pull torch, so the metric
+  libraries moved to `requirements-dev.txt` and the gate degrades to geometry + colour with a
+  readable reason when they are absent.

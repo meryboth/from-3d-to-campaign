@@ -130,6 +130,9 @@ per approved piece, **$0.021**.
 
 ### As a ComfyUI node pack
 
+Published on the [ComfyUI Registry](https://registry.comfy.org/nodes/from-3d-to-campaign): open the
+**ComfyUI Manager**, search **From 3D to Campaign**, install. Or clone it yourself:
+
 ```bash
 cd ComfyUI/custom_nodes
 git clone https://github.com/meryboth/from-3d-to-campaign
@@ -254,9 +257,11 @@ out/              renders, passes, library, posts, runs.jsonl   (git-ignored)
 
 ## Publishing to the Comfy Registry
 
-The packaging is in place: root `__init__.py` entry point, `pyproject.toml` with the registry
-metadata, `.comfyignore`, and a GitHub Action that publishes on a version bump. What is left is
-account-side:
+Published as **`from-3d-to-campaign`** under the publisher **`@meryboth`**. Releases are automatic:
+bump `version` in `pyproject.toml`, push to `main`, and `.github/workflows/publish_action.yml` does
+the rest. A new version lands as *pending* while the registry scans it, then goes active.
+
+To reproduce the setup on another repo:
 
 1. Create a publisher at [registry.comfy.org](https://registry.comfy.org). The handle after the `@`
    is your **PublisherId** and it is permanent — it must match `[tool.comfy] PublisherId` in
@@ -265,7 +270,10 @@ account-side:
 3. Add it to the repo as the secret `REGISTRY_ACCESS_TOKEN`
    (Settings → Secrets and variables → Actions).
 4. Publish — either `pip install comfy-cli && comfy node publish`, or bump `version` in
-   `pyproject.toml` and push: `.github/workflows/publish_action.yml` does the rest.
+   `pyproject.toml` and push.
+
+If the action fails with `Option '--token' requires an argument`, the secret is missing or misnamed:
+that is what an empty `REGISTRY_ACCESS_TOKEN` looks like from inside the runner.
 
 Still worth doing before calling it stable: node-level CI (load the pack headless, run the graph on
 a fixture scene, assert the gate's numbers against stored values), a model bootstrap script with
