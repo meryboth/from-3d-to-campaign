@@ -173,3 +173,20 @@ Creative direction reviewed the 4 escalated items: **aerial restored and aerial 
 **Total $0.145 for the whole project**, including every benchmark, A/B and rejected render. **$0.021 per approved piece.** Marginal cost of one more approved piece at the current hit rate: ~4.2 GPU s of klein ($0.004) plus ~90 s of local upscale (~$0.0001).
 
 Quality gate: 6 of 18 verdicts passed; 2 more pieces were approved by a human after review.
+
+## Stage 8: brand layer and ad composer (local, $0)
+
+The renders became ads. A **fictional** developer — *form and order* — with a real brand system: cream paper, black mark, Switzer (Fontshare, free for commercial use), terracotta accent, and a voice guide that bans luxury clichés and invented amenities. The visual language is generic modernist; the mark is drawn from code in `pipeline/brand_mark.py`, so there is no external asset and no resemblance to any real studio's logo.
+
+`pipeline/composer.py` lays out three formats in three languages from one approved piece:
+- **feed 1:1** — image + paper band with headline, facts and mark
+- **story 9:16** — full bleed with a gradient scrim, copy inside the safe zone (250 px top, 320 px bottom for the platform UI)
+- **banner 16:9** — image left, paper panel right
+
+**63 ads (7 pieces × 3 formats × 3 languages) in 5.8 s, ~93 ms each, $0.** Transcreation is just another key in `config/copy.json`; adding a language costs 21 more files and about two seconds.
+
+Two rules are enforced in the layout itself, not left to whoever writes the caption:
+1. **Every asset carries the AI disclosure** in its language.
+2. **The facts come from `config/copy.json`**, one source for m², rooms, patios and price, so no piece can contradict another.
+
+Hypothetical project data (Casa Larga 1408, Villa Crespo, 182 m², USD 265,000) is flagged as invented in the config and in the report.

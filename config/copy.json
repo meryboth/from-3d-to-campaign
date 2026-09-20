@@ -1,0 +1,57 @@
+{
+  "_disclaimer": "Hypothetical project and figures, invented for this R&D report. Not a real listing.",
+  "project": {
+    "name": "Casa Larga 1408",
+    "typology": "casa chorizo, c. 1890",
+    "neighbourhood": "Villa Crespo, Buenos Aires",
+    "lot": "8,66 × 50 m",
+    "area_m2": 182,
+    "rooms": 3,
+    "patios": 2,
+    "price_usd": 265000,
+    "status": { "es": "en restauración", "en": "under restoration", "pt": "em restauração" }
+  },
+  "pieces": {
+    "street_restored": {
+      "es": { "head": "la fachada que ya estaba", "sub": "Restauramos la casa que había, con su cornisa y sus postigos." },
+      "en": { "head": "the facade that was already there", "sub": "We restore the house that existed, cornice and shutters included." },
+      "pt": { "head": "a fachada que já estava lá", "sub": "Restauramos a casa que havia, com sua cornija e suas venezianas." }
+    },
+    "street_dusk": {
+      "es": { "head": "a las ocho de la tarde", "sub": "Tres ambientes sobre la línea municipal, con la luz prendida." },
+      "en": { "head": "eight in the evening", "sub": "Three rooms on the street line, with the lights on." },
+      "pt": { "head": "às oito da noite", "sub": "Três ambientes na linha da rua, com as luzes acesas." }
+    },
+    "street_contemporary": {
+      "es": { "head": "la misma casa, otro siglo", "sub": "Carpinterías nuevas, muros blanqueados, la proporción intacta." },
+      "en": { "head": "the same house, another century", "sub": "New frames, white-washed walls, the proportions untouched." },
+      "pt": { "head": "a mesma casa, outro século", "sub": "Esquadrias novas, paredes caiadas, a proporção intacta." }
+    },
+    "patio_dusk": {
+      "es": { "head": "el patio es el living", "sub": "Piso damero, columnas de hierro y cielo abierto en el medio de la casa." },
+      "en": { "head": "the patio is the living room", "sub": "Checkerboard floor, iron columns and open sky in the middle of the house." },
+      "pt": { "head": "o pátio é a sala", "sub": "Piso xadrez, colunas de ferro e céu aberto no meio da casa." }
+    },
+    "patio_contemporary": {
+      "es": { "head": "doce metros de galería", "sub": "Todos los ambientes abren al mismo patio, como hace cien años." },
+      "en": { "head": "twelve metres of gallery", "sub": "Every room opens onto the same patio, as it did a hundred years ago." },
+      "pt": { "head": "doze metros de galeria", "sub": "Todos os ambientes abrem para o mesmo pátio, como há cem anos." }
+    },
+    "aerial_restored": {
+      "es": { "head": "larga y angosta, como el lote", "sub": "8,66 por 50 metros: cuartos en fila, dos patios y fondo con frutales." },
+      "en": { "head": "long and narrow, like the lot", "sub": "8.66 by 50 metres: rooms in a row, two patios and a back garden." },
+      "pt": { "head": "longa e estreita, como o lote", "sub": "8,66 por 50 metros: quartos em fila, dois pátios e quintal com frutíferas." }
+    },
+    "aerial_contemporary": {
+      "es": { "head": "las terrazas también cuentan", "sub": "Azoteas planas sobre cada cuarto, listas para usar." },
+      "en": { "head": "the roof terraces count too", "sub": "Flat roofs over every room, ready to use." },
+      "pt": { "head": "os terraços também contam", "sub": "Lajes planas sobre cada quarto, prontas para usar." }
+    }
+  },
+  "cta": { "es": "coordiná una visita", "en": "book a viewing", "pt": "agende uma visita" },
+  "labels": {
+    "es": { "rooms": "ambientes", "area": "m² cubiertos", "patios": "patios", "from": "desde" },
+    "en": { "rooms": "rooms", "area": "m² covered", "patios": "patios", "from": "from" },
+    "pt": { "rooms": "ambientes", "area": "m² cobertos", "patios": "pátios", "from": "a partir de" }
+  }
+}

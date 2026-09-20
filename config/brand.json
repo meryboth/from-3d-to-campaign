@@ -1,0 +1,92 @@
+{
+  "_disclaimer": "FICTIONAL developer, invented for this R&D project. Any resemblance to a real company is unintended. The visual language is generic modernist (cream paper, black geometric mark, lowercase grotesk); the mark itself is original to this project.",
+  "name": "form and order",
+  "wordmark": "form and order",
+  "tagline": {
+    "es": "casas que ya sabían cómo vivirse",
+    "en": "houses that already knew how to be lived in",
+    "pt": "casas que já sabiam como ser vividas"
+  },
+  "positioning": "A developer that restores Buenos Aires heritage typologies and sells them as they are: long, narrow, full of light and patios. Modern graphics, old architecture.",
+  "palette": {
+    "paper": "#EFECE3",
+    "ink": "#12100E",
+    "accent": "#C8511E",
+    "muted": "#8A857A"
+  },
+  "typography": {
+    "family": "Switzer",
+    "license": "Fontshare free license (desktop + web, commercial use allowed)",
+    "source": "fontshare.com/fonts/switzer",
+    "note": "Neutral grotesk, close to the reference's Söhne-like feel. Wordmark and headlines lowercase; data uppercase with wide tracking.",
+    "files": {
+      "regular": "assets/fonts/Switzer_Complete/Fonts/OTF/Switzer-Regular.otf",
+      "bold": "assets/fonts/Switzer_Complete/Fonts/OTF/Switzer-Semibold.otf",
+      "fallback_regular": "C:/Windows/Fonts/arial.ttf",
+      "fallback_bold": "C:/Windows/Fonts/arialbd.ttf"
+    }
+  },
+  "mark": {
+    "concept": "2x2 grid: two solid squares and two quarter-discs in a pinwheel. Order = the grid and the squares; form = the curves. Drawn from code in pipeline/brand_mark.py, no external asset.",
+    "clearspace": "one module on every side",
+    "min_size_px": 48
+  },
+  "voice": {
+    "do": [
+      "short, plain sentences",
+      "talk about light, patios, proportions and the street",
+      "use real measurements",
+      "spanish rioplatense for AR, neutral for PT/EN"
+    ],
+    "dont": [
+      "luxury clichés (exclusive, unique opportunity, dream home)",
+      "exclamation marks",
+      "invented amenities",
+      "promises about the neighbourhood's future value"
+    ]
+  },
+  "legal": {
+    "ai_disclosure": {
+      "es": "Imagen generada con IA a partir del modelo 3D del proyecto.",
+      "en": "AI-generated image based on the project's 3D model.",
+      "pt": "Imagem gerada com IA a partir do modelo 3D do projeto."
+    },
+    "rule": "Every published asset carries the AI disclosure. Geometry must match the 3D model (that is what the quality gate enforces): no invented rooms, balconies, windows or amenities."
+  },
+  "formats": {
+    "feed": {
+      "w": 1080,
+      "h": 1080,
+      "safe": [
+        40,
+        40,
+        40,
+        40
+      ]
+    },
+    "story": {
+      "w": 1080,
+      "h": 1920,
+      "safe": [
+        40,
+        250,
+        40,
+        320
+      ]
+    },
+    "banner": {
+      "w": 1920,
+      "h": 1080,
+      "safe": [
+        48,
+        48,
+        48,
+        48
+      ]
+    }
+  },
+  "typography_fallback_files": {
+    "regular": "C:/Windows/Fonts/arial.ttf",
+    "bold": "C:/Windows/Fonts/arialbd.ttf"
+  }
+}
