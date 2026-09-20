@@ -87,6 +87,47 @@ class CasaPasses:
         return (torch.from_numpy(lines)[None, ...], torch.from_numpy(mask_img)[None, ...])
 
 
+class CasaRender3D:
+    """Render the project's 3D scene to passes, headless, from inside the graph.
+
+    ComfyUI's own Load3D renders in the browser viewport, so it cannot be driven by a
+    batch or an API call. This node shells out to the repo's headless Three.js exporter
+    (Playwright + the system Edge), which renders beauty, depth, normals, lines and the
+    material-ID map for a named camera, with the same content-addressed cache the CLI uses.
+    """
+
+    @classmethod
+    def INPUT_TYPES(cls):
+        cams = [c["id"] for c in json.loads((REPO / "config" / "cameras.json").read_text(encoding="utf-8"))["cameras"]]
+        return {"required": {
+            "camera": (cams,),
+            "force_rerender": ("BOOLEAN", {"default": False}),
+        }}
+
+    RETURN_TYPES = ("IMAGE", "IMAGE", "IMAGE", "IMAGE", "IMAGE", "MASK", "STRING")
+    RETURN_NAMES = ("beauty", "depth", "normal", "lines", "ids", "mask", "info")
+    FUNCTION = "run"
+    CATEGORY = CATEGORY
+
+    def run(self, camera, force_rerender):
+        import subprocess
+        t0 = time.time()
+        cmd = ["node", str(REPO / "scripts" / "export-passes.mjs"), camera] + (["--force"] if force_rerender else [])
+        proc = subprocess.run(cmd, cwd=str(REPO), capture_output=True, text=True, timeout=900)
+        if proc.returncode != 0:
+            raise RuntimeError(f"pass exporter failed: {proc.stderr[-800:]}")
+        d = REPO / "out" / "passes" / camera
+        imgs = [to_image(Image.open(d / f"{n}.png")) for n in ("beauty", "depth", "normal", "lines", "ids")]
+        ids = np.asarray(Image.open(d / "ids.png").convert("RGB"))
+        mask = torch.from_numpy((~np.all(ids == 0, axis=-1)).astype(np.float32))[None, ...]
+        meta = json.loads((d / "meta.json").read_text(encoding="utf-8"))
+        cached = "cache hit" in proc.stdout
+        info = (f"camera {camera} · {meta['width']}x{meta['height']} · hash {meta['hash']} · "
+                f"{'from cache' if cached else str(meta['wallMs']) + ' ms render'} · "
+                f"{round((time.time() - t0) * 1000)} ms in-graph")
+        return (*imgs, mask, info)
+
+
 # ---- 2. quality gate --------------------------------------------------------
 
 class CasaQAGate:
@@ -420,6 +461,7 @@ class CasaLogRun:
 
 
 NODE_CLASS_MAPPINGS = {
+    "CasaRender3D": CasaRender3D,
     "CasaPasses": CasaPasses,
     "CasaQAGate": CasaQAGate,
     "CasaCopySpec": CasaCopySpec,
@@ -428,6 +470,7 @@ NODE_CLASS_MAPPINGS = {
     "CasaLogRun": CasaLogRun,
 }
 NODE_DISPLAY_NAME_MAPPINGS = {
+    "CasaRender3D": "Casa · render 3D scene",
     "CasaPasses": "Casa · passes from 3D",
     "CasaQAGate": "Casa · quality gate",
     "CasaCopySpec": "Casa · copy prompt",

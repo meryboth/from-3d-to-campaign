@@ -64,6 +64,15 @@ const idMaterials = createIdMaterials();
 const idTable = Object.fromEntries(Object.entries(MATERIALS).map(([k, m]) => [m.id.join(','), k]));
 
 if (EXPORT) {
+  // GLB for ComfyUI's Load3D node: the same procedural house, as a file the graph can load
+  window.exportGLB = async () => {
+    const { GLTFExporter } = await import('three/addons/exporters/GLTFExporter.js');
+    const buf = await new GLTFExporter().parseAsync(house, { binary: true, onlyVisible: true });
+    let s = '';
+    const bytes = new Uint8Array(buf);
+    for (let i = 0; i < bytes.length; i += 0x8000) s += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
+    return btoa(s);
+  };
   window.renderPasses = (camId) => {
     const cam = camById(camId);
     setCamera(cam);

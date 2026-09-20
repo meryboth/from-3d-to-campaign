@@ -15,7 +15,7 @@ const ROOT = new URL('..', import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, '
 const OUT = join(ROOT, 'out', 'passes');
 const args = process.argv.slice(2);
 const force = args.includes('--force');
-const only = args.filter((a) => !a.startsWith('--'));
+const only = args.filter((a, i) => !a.startsWith('--') && args[i - 1] !== '--camera');
 
 const config = JSON.parse(await readFile(join(ROOT, 'config', 'cameras.json'), 'utf8'));
 const specText = await readFile(join(ROOT, 'scene', 'house.json'), 'utf8');
@@ -37,7 +37,9 @@ function npy(f32, h, w) {
 }
 
 await mkdir(OUT, { recursive: true });
-const cams = config.cameras.filter((c) => !only.length || only.includes(c.id));
+const customIdx = args.indexOf('--camera');
+const custom = customIdx >= 0 ? JSON.parse(args[customIdx + 1]) : null;
+const cams = custom ? [custom] : config.cameras.filter((c) => !only.length || only.includes(c.id));
 const plan = cams.map((cam) => ({
   cam,
   hash: sha(JSON.stringify({ spec: specText, cam, w: config.width, h: config.height, lighting: config.lighting, src: srcText })),

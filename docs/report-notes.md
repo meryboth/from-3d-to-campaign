@@ -168,3 +168,36 @@ Lessons for the report:
 Sample output (ES, after repair): claim "la casa respira con la calle" · headline "fachada original,
 1890" · caption "Postigos verdes y puerta tallada. La casa chorizo mira hacia Villa Crespo desde su
 reja." · cta "conocé la casa".
+
+## 12. The graph, as one picture (2026-09-20)
+
+![Master graph in ComfyUI](images/comfy_graph_master.png)
+
+Everything above runs as **one local ComfyUI graph**, 25 nodes, seven stages:
+
+| Stage | Nodes | What happens |
+|---|---|---|
+| 1 · 3D passes in | `beauty_image`, `normal_image`, `passes` (CasaPasses) | the Three.js passes enter the graph; lines are rebuilt from the normal pass + silhouette |
+| 2 · Models | `ckpt` (RealVisXL V5), `lora` (SDXL-Lightning 8-step), `controlnet` (xinsir union) + `type_lines`, `upscaler` (Real-ESRGAN) | everything that is loaded once |
+| 3 · Conditioning | `positive`, `negative`, `encode_beauty`, `latent`, `cn_lines` | the beauty pass is VAE-encoded as the starting latent (denoise 0.85) and the lines drive ControlNet at 0.70 |
+| 4 · Sampling | `sampler`, `decode`, `preview_render` | 8 steps, cfg 1.0, euler / sgm_uniform |
+| 5 · Quality gate | `gate` (CasaQAGate), `upscale`, `down_to_2x` | edge recall, ΔE after white balance, NIQE, p_photo — then 4× and back down to 2× |
+| 6 · LLM copy | `copy_prompt` (CasaCopySpec), `llm` (Claude Haiku 4.5), `copy_check` (CasaCopyCheck) | system prompt with the fact whitelist, then JSON validation |
+| 7 · Layout & log | `layout` (CasaLayout), `save_asset`, `log` (CasaLogRun) | the designed asset plus one line in `runs.jsonl` with seconds, tokens and cost |
+
+![The casa-accelerator node pack](images/comfy_nodes_detail.png)
+
+The six custom nodes are the part of the pipeline that is *ours*: the rest are stock ComfyUI nodes.
+They are thin on purpose — each one calls the same Python module the CLI uses, so the graph and the
+batch script cannot drift apart.
+
+A seventh node, `CasaRender3D`, renders the passes from `scene/house.json` inside the graph
+(it shells out to the Playwright exporter), so a run can start from the 3D scene instead of from
+pre-exported PNGs. `Load3D` was the obvious candidate for this and does not work here: it renders in
+the browser frontend, so it produces nothing in a headless or queued run.
+
+**How these figures were made** (because "take a screenshot" does not survive a 3400 px graph):
+the LiteGraph canvas is exported in the browser with `canvas.toDataURL()` at report resolution with
+the background layer off, POSTed to ComfyUI's `/api/userdata`, and turned into a figure by
+`scripts/comfy_figure.py`, which flattens it onto the brand ink and sets the stage labels in Switzer.
+No window chrome, no viewport cropping, no zoom artefacts — and it is reproducible.

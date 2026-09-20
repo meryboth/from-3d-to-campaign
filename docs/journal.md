@@ -239,3 +239,17 @@ gate → upscale → copy prompt → Claude Haiku 4.5 (partner node, billed in C
 check → layout → save, with the run log at the end.
 
 Report notes live in `docs/report-notes.md` from now on, updated as we go.
+
+## Stage 11 — the graph as a document (2026-09-20)
+
+Two report figures, both exported from the real graph: `docs/images/comfy_graph_master.png`
+(3400×1432, the 25-node master graph laid out in seven stage columns) and
+`docs/images/comfy_nodes_detail.png` (1900×2677, the casa-accelerator nodes with their inputs and
+widgets readable). `scripts/comfy_figure.py` turns a raw canvas export into a labelled figure, so
+regenerating them after a graph change is one command, not a screenshot session.
+
+Also added: `CasaRender3D` (renders the passes from the 3D scene inside the graph — `Load3D` renders
+in the frontend and returns nothing in a headless run) and `scripts/export-glb.mjs`
+(`out/model/casa-chorizo.glb`, 2.19 MB, the same procedural house as a file).
+
+`CasaRender3D` needs a ComfyUI restart to load.
