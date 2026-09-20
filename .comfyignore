@@ -1,0 +1,7 @@
+docs/
+out/
+node_modules/
+assets/fonts/Switzer_Complete/Fonts/OTF/
+scripts/comfy_figure.py
+scripts/report_assets.py
+.venv/

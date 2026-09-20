@@ -1,6 +1,4 @@
+# Installed next to ComfyUI (the Manager reads this file). Nothing here pulls torch.
 numpy>=2
 pillow>=11
 websocket-client>=1.8
-torch  # install with --index-url https://download.pytorch.org/whl/cu126
-open_clip_torch
-pyiqa

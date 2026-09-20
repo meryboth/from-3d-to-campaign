@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Casa Accelerator</title>
+<title>From 3D to Campaign</title>
 <meta name="description" content="A generative-AI production pipeline that turns a 3D model of a building into social-ready campaign assets, with a quality gate and a cost line for every piece.">
 <style>
 @font-face{font-family:Switzer;src:url("assets/fonts/Switzer-Variable.ttf") format("truetype-variations");font-weight:100 900;font-display:swap}
@@ -139,7 +139,7 @@ footer{border-top:1px solid var(--line);padding:44px 0 70px;font-size:14px;color
   <div class="wrap">
     <span class="brand">
       <svg class="mark" viewBox="0 0 24 24" aria-hidden="true"><path d="M0 6a6 6 0 0 1 6-6h18v18a6 6 0 0 1-6 6H0Z" fill="currentColor"/></svg>
-      Casa Accelerator
+      From 3D to Campaign
     </span>
     <a href="#pipeline">Pipeline</a>
     <a href="#control">Control</a>
@@ -603,15 +603,18 @@ python pipeline/cost_table.py                  # regenerates docs/costs.md</code
 
     <h3 style="margin-top:54px">To make it properly plug-and-play</h3>
     <p class="body-col">What is in place, and what is not, for publishing to the ComfyUI Registry so the
-      pack installs from the Manager by name:</p>
+      pack installs from the Manager by name. The packaging is done; what remains is account-side —
+      a publisher handle, an API key stored as <span class="mono">REGISTRY_ACCESS_TOKEN</span>, and a
+      version bump to trigger the action.</p>
     <table class="tbl">
       <thead><tr><th style="width:34%">Piece</th><th style="width:14%">State</th><th>What is needed</th></tr></thead>
       <tbody>
         <tr><td>Node pack, stable node IDs and display names</td><td class="pass">done</td><td>Seven nodes under one category, thin wrappers over the shared modules.</td></tr>
         <tr><td>Example workflows in the repo</td><td class="pass">done</td><td>API and UI formats, both committed, both current with the nodes.</td></tr>
         <tr><td>Run log and cost table</td><td class="pass">done</td><td>Generated from the log, not written by hand.</td></tr>
-        <tr><td><span class="mono">pyproject.toml</span> with Comfy Registry metadata</td><td>missing</td><td>Publisher ID, semantic version, repository URL, node list — then <span class="mono">comfy node publish</span>.</td></tr>
-        <tr><td>Dependency manifest for the pack</td><td>missing</td><td>Its own <span class="mono">requirements.txt</span> without torch, plus a guard that fails with a readable message when a metric library is absent instead of at import time.</td></tr>
+        <tr><td>Root entry point, so a clone into <span class="mono">custom_nodes</span> just works</td><td class="pass">done</td><td>An <span class="mono">__init__.py</span> at the repo root re-exports the pack's mappings — no loader stub to write by hand.</td></tr>
+        <tr><td><span class="mono">pyproject.toml</span> with Comfy Registry metadata</td><td class="pass">done</td><td>Name, semantic version, licence, repository, publisher ID and the ComfyUI version floor, plus a <span class="mono">.comfyignore</span> and a GitHub Action that publishes on a version bump.</td></tr>
+        <tr><td>Dependency manifest for the pack</td><td class="pass">done</td><td>The root <span class="mono">requirements.txt</span> carries nothing that pulls torch; the metric libraries live in <span class="mono">requirements-dev.txt</span> and the gate degrades to geometry + colour with a readable reason when they are absent.</td></tr>
         <tr><td>Node-level tests in CI</td><td>missing</td><td>Load the pack headless, run the graph on a fixture scene, assert the gate's numbers against stored values.</td></tr>
         <tr><td>Model bootstrap</td><td>missing</td><td>A script that fetches the four models with checksums, or Manager model-list entries.</td></tr>
         <tr><td>Node.js dependency</td><td>partly</td><td><span class="mono">CasaRender3D</span> shells out to a Playwright exporter that needs Node and a Chromium-family browser. Packaging a pre-baked GLB path would remove that for users who bring their own 3D file.</td></tr>
@@ -665,7 +668,7 @@ python pipeline/cost_table.py                  # regenerates docs/costs.md</code
   <div class="wrap">
     <div class="two">
       <div>
-        <p style="color:var(--ink);font-weight:600;margin-bottom:6px">Casa Accelerator</p>
+        <p style="color:var(--ink);font-weight:600;margin-bottom:6px">From 3D to Campaign</p>
         <p style="margin:0">Personal R&amp;D. The developer, the project and its figures are fictional.
           Images are generated with AI from the project's own 3D model.</p>
       </div>

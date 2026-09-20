@@ -1,0 +1,7 @@
+# For the standalone venv that runs the CLI pipeline and the metrics.
+# Inside ComfyUI, install these two with --no-deps: they want their own torch build
+# and will happily replace the CUDA one ComfyUI is running on.
+-r requirements.txt
+torch  # --index-url https://download.pytorch.org/whl/cu126
+open_clip_torch
+pyiqa

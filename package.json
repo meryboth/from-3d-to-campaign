@@ -1,9 +1,9 @@
 {
-  "name": "casa-accelerator",
+  "name": "from-3d-to-campaign",
   "private": true,
   "version": "0.1.0",
   "type": "module",
-  "description": "From a procedural 3D house to a library of campaign assets: a measured generative-AI production pipeline.",
+  "description": "Turn a 3D model of a building into social-ready campaign assets: geometry-faithful renders, an automatic quality gate, validated copy and a laid-out post.",
   "scripts": {
     "scene": "vite scene",
     "export": "node scripts/export-passes.mjs"
