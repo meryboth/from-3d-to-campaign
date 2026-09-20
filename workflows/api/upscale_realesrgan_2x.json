@@ -1,0 +1,11 @@
+{
+  "1": { "class_type": "LoadImage", "_meta": { "title": "source_image" }, "inputs": { "image": "" } },
+  "2": { "class_type": "UpscaleModelLoader", "_meta": { "title": "upscaler" },
+    "inputs": { "model_name": "RealESRGAN_x4plus.pth" } },
+  "3": { "class_type": "ImageUpscaleWithModel", "_meta": { "title": "upscale_4x" },
+    "inputs": { "upscale_model": ["2", 0], "image": ["1", 0] } },
+  "4": { "class_type": "ImageScaleBy", "_meta": { "title": "down_to_2x" },
+    "inputs": { "image": ["3", 0], "upscale_method": "lanczos", "scale_by": 0.5 } },
+  "5": { "class_type": "SaveImage", "_meta": { "title": "save" },
+    "inputs": { "images": ["4", 0], "filename_prefix": "casa/upscaled" } }
+}

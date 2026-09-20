@@ -154,3 +154,22 @@ The 4 grid items that failed gate v1.1 went through the retry loop (≈ 0.8–1.
 3. **After N retries, stop spending and escalate.** The 4 items sit in `out/review/pending.json` with their candidates and gate notes. This is the human approval checkpoint, and later a LangGraph interrupt.
 
 Retries: 8 images, ≈ 6.9 credits. Running total for the day: ≈ 30 credits ≈ $0.14 (Comfy Cloud), $0 local.
+
+## Stage 7: approvals and the asset library
+
+Creative direction reviewed the 4 escalated items: **aerial restored and aerial contemporary approved** (both sit within 0.4 of a threshold), **aerial dusk rejected** (no attempt had both color and geometry), **patio restored rejected** for now (walls read yellow under golden light in all 3 attempts; worth revisiting with different light or a stronger palette instruction). Decisions are recorded in `config/approved.json` with the reason for each.
+
+**7 approved pieces → 28 files.** `pipeline/library.py` upscales 2× with Real-ESRGAN on the local 2060 (79–99 s per piece, ~1.2 Wh, $0) and cuts feed 1:1, story 9:16 and banner 16:9. Crops are framed on the house's bounding box from the material-ID pass, not on the image center, so the facade never gets cut off.
+
+**Cost table (`docs/costs.md`, generated from `out/runs.jsonl`):**
+
+| stage | backend | runs | cache hits | errors | time | $ |
+|---|---|---|---|---|---|---|
+| export passes | local (Three.js) | 9 | 3 | 0 | 10 s | 0 |
+| render | local ComfyUI (2060) | 13 | 1 | 0 | 1,552 s | 0.0015 |
+| render | Comfy Cloud | 29 | 0 | 2 | 147 GPU s | 0.1425 |
+| upscale + crops | local ComfyUI | 16 | 2 | 0 | 545 s | 0.0008 |
+
+**Total $0.145 for the whole project**, including every benchmark, A/B and rejected render. **$0.021 per approved piece.** Marginal cost of one more approved piece at the current hit rate: ~4.2 GPU s of klein ($0.004) plus ~90 s of local upscale (~$0.0001).
+
+Quality gate: 6 of 18 verdicts passed; 2 more pieces were approved by a human after review.

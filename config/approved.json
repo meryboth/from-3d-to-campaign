@@ -1,0 +1,59 @@
+{
+ "approved_by": "Marilyn (creative direction)",
+ "date": "2026-09-20",
+ "policy": "gate v1.1 pass, or human approval after 2 retries",
+ "pieces": [
+  {
+   "piece": "street_restored",
+   "cam": "street",
+   "render": "out/renders/cloud/street/klein9b_edit_lines_pal_restored_s1.png",
+   "how": "gate pass"
+  },
+  {
+   "piece": "street_dusk",
+   "cam": "street",
+   "render": "out/renders/cloud/street/klein9b_edit_lines_pal_dusk_s1.png",
+   "how": "gate pass"
+  },
+  {
+   "piece": "street_contemporary",
+   "cam": "street",
+   "render": "out/renders/cloud/street/klein9b_edit_lines_contemporary_s1.png",
+   "how": "gate pass"
+  },
+  {
+   "piece": "patio_dusk",
+   "cam": "patio",
+   "render": "out/renders/cloud/patio/klein9b_edit_lines_pal_dusk_s1.png",
+   "how": "gate pass"
+  },
+  {
+   "piece": "patio_contemporary",
+   "cam": "patio",
+   "render": "out/renders/cloud/patio/klein9b_edit_lines_contemporary_s1.png",
+   "how": "gate pass"
+  },
+  {
+   "piece": "aerial_restored",
+   "cam": "aerial",
+   "render": "out/renders/cloud/aerial/klein9b_edit_lines_pal_restored_s2001.png",
+   "how": "human approved (edge 0.83, dE 10.4 vs limit 10)"
+  },
+  {
+   "piece": "aerial_contemporary",
+   "cam": "aerial",
+   "render": "out/renders/cloud/aerial/klein9b_edit_lines_contemporary_s2001.png",
+   "how": "human approved (edge 0.694 vs limit 0.70)"
+  }
+ ],
+ "rejected": [
+  {
+   "piece": "aerial_dusk",
+   "why": "no attempt had both color and geometry"
+  },
+  {
+   "piece": "patio_restored",
+   "why": "walls read yellow under golden light in 3 attempts; revisit with different light or a stronger palette instruction"
+  }
+ ]
+}
